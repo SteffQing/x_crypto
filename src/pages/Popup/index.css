@@ -1,0 +1,75 @@
+/* Eric Meyer's Reset CSS */
+
+/* Box sizing reset */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+/* Prevent font and text-size adjustments */
+html {
+  font-size: 16px;
+}
+
+/* Root element */
+body {
+  font-family: Doppio One, Arial, sans-serif;
+  line-height: 1.5;
+  color: #333;
+}
+
+/* Remove list styles (bullets/numbers) */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Remove default margin for the main heading */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: normal;
+  font-size: initial;
+  margin: 0;
+}
+
+/* Anchor links without underlines */
+a {
+  text-decoration: none;
+}
+
+/* Remove borders on images within links */
+img {
+  border-style: none;
+}
+
+/* Remove horizontal rule styles */
+hr {
+  border: none;
+}
+
+/* Remove styling on input elements */
+input,
+button,
+textarea,
+select {
+  appearance: none;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  outline: none;
+}
+
+/* Clear floated elements */
+.clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}

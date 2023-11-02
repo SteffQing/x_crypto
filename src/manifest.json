@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Friend.tech Gems",
+  "description": "Highlight friend.tech gems info on Twitter",
+  "version": "1.3.7",
+  "permissions": ["storage"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon-48x48.png"
+  },
+  "icons": {
+    "128": "icon-128x128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://twitter.com/*", "https://x.com/*"],
+      "js": ["contentScript.bundle.js"],
+      "css": ["content.styles.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.bundle.js",
+    "type": "module"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["content.styles.css"],
+      "matches": []
+    }
+  ]
+}

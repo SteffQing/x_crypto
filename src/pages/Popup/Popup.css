@@ -1,0 +1,57 @@
+.ex-container {
+  display: flex;
+  flex-direction: column;
+  width: 212px;
+}
+
+.ex-header {
+  background-color: #00c2ff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  width: 100%;
+  height: 274px;
+}
+
+.mt-48 {
+  margin-top: 48px;
+}
+
+.c-white {
+  color: white;
+}
+
+.c-gray {
+  color: #8c8c8c;
+}
+
+.c-black {
+  color: #000000;
+}
+
+.fs-sm {
+  font-size: 0.625rem;
+}
+
+.fs-xs {
+  font-size: 0.6rem;
+}
+
+.main-txt-adj {
+  margin: 4px 0 12px;
+}
+
+.ex-body {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 4px 16px 0;
+}
+
+.ex-footer {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0;
+}
