@@ -1,3 +1,4 @@
+import { cashtag_regex } from '../../../utils';
 import {
   CLASS_FOR_TAG,
   MS_GET_USER_INFO,
@@ -19,6 +20,7 @@ let intervalId = null;
 
 const startProcess = () => {
   intervalId = setInterval(fetchAndAttach, INTERVAL_MS);
+  console.log('Start');
   fetchAndAttach();
 };
 
@@ -32,12 +34,12 @@ const stopProcess = () => {
 const fetchAndAttach = async () => {
   console.log('fetchAndAttach');
 
-  const usernames = getTwitterUserNames();
-  const newUsernames = usernames.filter((name) => !dataMap.has(name));
+  const cashtags = getTweetCashtags();
+  const newCashTags = cashtags.filter((cashtag) => !dataMap.has(cashtag));
 
   try {
-    if (newUsernames.length > 0) {
-      await getUserInfos(newUsernames);
+    if (newCashTags.length > 0) {
+      await getUserInfos(newCashTags);
     }
     attachInfoTag();
   } catch (error) {
@@ -45,45 +47,36 @@ const fetchAndAttach = async () => {
   }
 };
 
-const getTwitterUserNames = () => {
-  const contents = Array.from(
-    document.querySelectorAll("[data-testid='cellInnerDiv']")
-  );
-  const cells = Array.from(
-    document.querySelectorAll("[data-testid='UserCell']")
+const getTweetCashtags = () => {
+  const tweet = Array.from(
+    document.querySelectorAll("[data-testid='tweetText']")
   );
 
-  const elements = contents.concat(cells);
-  const user = document.querySelector("[data-testid='UserName']");
-
-  if (user) {
-    elements.push(user);
-  }
-
-  const linkUrls = elements
-    .map((element) =>
-      Array.from(element.querySelectorAll('a'))
+  const linkUrls = tweet
+    .map((content) =>
+      Array.from(content.querySelectorAll('a'))
         .map((element) => element.href)
-        .filter((url) => url.startsWith(TWITTER_URL))
+        .filter((url) => cashtag_regex.test(url))
     )
     .flat();
 
-  const usernames = FromLinkUrlsToUsernames(linkUrls);
-  return usernames;
+  const cashtags = FromLinksToCashtags(linkUrls);
+  return cashtags;
 };
 
-const FromLinkUrlsToUsernames = (urls) => {
-  const uniqueUsernames = new Set();
+const FromLinksToCashtags = (urls) => {
+  const uniqueCashTags = new Set();
 
   for (let url of urls) {
-    const parts = url.split('/');
-    if (parts.length === 4) {
-      uniqueUsernames.add(parts[parts.length - 1]);
+    let [i1, i2] = [url.indexOf('%24'), url.indexOf('&src')];
+    let token = url.slice(i1 + 3, i2);
+    if (token.length >= 3 && token.length <= 5) {
+      uniqueCashTags.add(token);
     }
   }
 
-  const usernames = Array.from(uniqueUsernames);
-  return usernames;
+  const cashtags = Array.from(uniqueCashTags);
+  return cashtags;
 };
 
 const getFirstLeefNode = (tag) => {
@@ -119,7 +112,7 @@ const getUserInfos = async (names) => {
   });
 };
 
-const parseUsername = (textContent = '') => {
+const parseCashtag = (textContent = '') => {
   const dotIdx = textContent.indexOf('·');
   let userName = textContent.substring(
     textContent.indexOf('@') + 1,
@@ -133,10 +126,30 @@ const parseUsername = (textContent = '') => {
 };
 
 function attachInfoTag() {
-  const selectedUserTag = document.querySelector("[data-testid='UserName']");
-  if (selectedUserTag) {
-    const userName = parseUsername(selectedUserTag.children[0]?.textContent);
+  const selectedTweetTag = document.querySelector(
+    "[data-testid='tweetText']"
+  ).children;
+  if (selectedTweetTag) {
+    for (let tag of Array.from(selectedTweetTag)) {
+      if (Array.from(tag.classList).length === 1) {
+        let cashtag = parseCashtag(tag.textContent);
+        const matchedTag = dataMap.get(cashtag);
+        const checkLastTag = selectedTweetTag.querySelector(
+          `.${CLASS_FOR_TAG}`
+        );
+        if (matchedTag) {
+          if (checkLastTag) {
+            checkLastTag.remove();
+          }
+          const newDiv = createInfo(matchedTag);
+          selectedTweetTag.appendChild(newDiv);
+        }
+      }
+    }
+    //  Array.from(selectedTweetTag).filter(content => return Array.from(content.classList).length === 1)
+    // const userName = parseUsername(selectedUserTag.children[0]?.textContent);
 
+    // Old code. Delete
     const matchedUser = dataMap.get(userName);
     const checkLastTag = selectedUserTag.querySelector(`.${CLASS_FOR_TAG}`);
 
@@ -200,9 +213,8 @@ function createInfo(matchedUser) {
   const newDiv = document.createElement('div');
 
   newDiv.classList.add(CLASS_FOR_TAG);
-  newDiv.style.display = 'flex';
+  newDiv.style.display = 'block';
   newDiv.style.alignItems = 'center';
-  newDiv.style.gap = '2px';
   newDiv.style.fontFamily = 'TwitterChirp';
 
   const rankDisplay = matchedUser.rank

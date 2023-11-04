@@ -8,7 +8,7 @@ export const TWITTER_ACCOUNT_NAME = 'x_defi';
 
 export const CLASS_FOR_TAG = 'x_defi-view-created';
 
-export const TWITTER_URL = 'https://twitter.com';
+export const TWITTER_URL = 'https://twitter.com/hashtag';
 
 export const INFURA_KEY = '6ea08acb523d49fa969a0b53def4d5ed';
 

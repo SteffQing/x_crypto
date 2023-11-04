@@ -9,3 +9,5 @@ export function displayAddressOrENS(address) {
   }
   return '';
 }
+
+export const cashtag_regex = /cashtag_click/;
