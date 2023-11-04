@@ -202,6 +202,12 @@ function createSpan(text, className = '') {
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {
+  console.log('Chrome Storage Values: ', values);
+  console.log(
+    'Chrome Storage Values hasOwn: ',
+    values.hasOwnProperty(STORAGE_KEY)
+  );
+  console.log('Chrome Storage Values val[]: ', values[STORAGE_KEY]);
   if (values.hasOwnProperty(STORAGE_KEY) && values[STORAGE_KEY]) {
     setTimeout(startProcess, 300);
   }
@@ -212,6 +218,7 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   for (let key in changes) {
     if (key === STORAGE_KEY) {
       const newValue = changes[key].newValue;
+      console.log('NEW VALUE in Content Listener: ', newValue);
       if (newValue) {
         console.log('start interval');
         startProcess();
