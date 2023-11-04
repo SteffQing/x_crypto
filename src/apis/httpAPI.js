@@ -1,12 +1,13 @@
+import { CMC_APIKEY } from '../../utils/constant';
+
 const request = async (req) => {
-  const { url, method, body } = req;
-  const headers = {
-    'Content-Type': 'application/json',
-    body: body ? JSON.stringify(body) : null,
-  };
+  const { url, method } = req;
+  const headers = new Headers();
+  headers.append('X-CMC_PRO_API_KEY', CMC_APIKEY);
   return fetch(url, {
     method,
     headers,
+    redirect: 'follow',
   })
     .then((response) => response.json()) // Parse response as JSON
     .catch((error) => error);

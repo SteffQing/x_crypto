@@ -1,7 +1,7 @@
-import { SERVER_URL } from '../../utils/constant';
+import { CMC_URL } from '../../utils/constant';
 import { getRequest } from './httpAPI';
 
-export const getUserInfo = (names) =>
+export const getTokenInfo = (symbols) =>
   getRequest({
-    url: `${SERVER_URL}/api?names=${encodeURIComponent(names.join(','))}`,
+    url: `${CMC_URL}?symbols=${symbols.join(',')}`,
   });

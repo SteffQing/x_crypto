@@ -1,12 +1,10 @@
 import { cashtag_regex } from '../../../utils';
 import {
   CLASS_FOR_TAG,
-  MS_GET_USER_INFO,
+  MS_GET_TOKEN_INFO,
   STORAGE_KEY,
-  TWITTER_URL,
 } from '../../../utils/constant';
 
-const FOLLOW_YOU = 'Follows you';
 const INTERVAL_MS = 2000;
 
 const dataMap = new Map();
@@ -39,7 +37,7 @@ const fetchAndAttach = async () => {
 
   try {
     if (newCashTags.length > 0) {
-      await getUserInfos(newCashTags);
+      await getTokensInfo(newCashTags);
     }
     attachInfoTag();
   } catch (error) {
@@ -48,11 +46,11 @@ const fetchAndAttach = async () => {
 };
 
 const getTweetCashtags = () => {
-  const tweet = Array.from(
+  const tweets = Array.from(
     document.querySelectorAll("[data-testid='tweetText']")
   );
 
-  const linkUrls = tweet
+  const linkUrls = tweets
     .map((content) =>
       Array.from(content.querySelectorAll('a'))
         .map((element) => element.href)
@@ -79,50 +77,33 @@ const FromLinksToCashtags = (urls) => {
   return cashtags;
 };
 
-const getFirstLeefNode = (tag) => {
-  if (tag.children.length === 0) {
-    return tag;
-  }
-  return getFirstLeefNode(tag.children[0]);
-};
-
-const setUserInfos = (data) => {
+const setTokensInfo = (data) => {
   if (!Array.isArray(data) || data.length === 0) {
     return;
   }
+  console.log('setTokensInfo: ', data);
   data.forEach((value) => {
+    console.log('setTokensInfo Value: ', value);
+    console.log('DataMap: ', dataMap);
     dataMap.set(value.twitterusername, value);
   }, {});
 };
 
-const getUserInfos = async (names) => {
+const getTokensInfo = async (cashtags) => {
   return new Promise((resolve, reject) => {
     const msg = {
-      action: MS_GET_USER_INFO,
-      names,
+      action: MS_GET_TOKEN_INFO,
+      cashtags,
     };
     chrome.runtime.sendMessage(msg, (response) => {
       if (chrome.runtime.lastError) {
         reject(chrome.runtime.lastError);
       } else {
-        setUserInfos(response);
+        setTokensInfo(response);
         resolve('ok');
       }
     });
   });
-};
-
-const parseCashtag = (textContent = '') => {
-  const dotIdx = textContent.indexOf('·');
-  let userName = textContent.substring(
-    textContent.indexOf('@') + 1,
-    dotIdx === -1 ? textContent.length : dotIdx
-  );
-
-  if (userName.endsWith(FOLLOW_YOU)) {
-    userName = userName.slice(0, -FOLLOW_YOU.length);
-  }
-  return userName;
 };
 
 function attachInfoTag() {
@@ -132,7 +113,7 @@ function attachInfoTag() {
   if (selectedTweetTag) {
     for (let tag of Array.from(selectedTweetTag)) {
       if (Array.from(tag.classList).length === 1) {
-        let cashtag = parseCashtag(tag.textContent);
+        let cashtag = tag.textContent.replace('$', '');
         const matchedTag = dataMap.get(cashtag);
         const checkLastTag = selectedTweetTag.querySelector(
           `.${CLASS_FOR_TAG}`
@@ -141,72 +122,13 @@ function attachInfoTag() {
           if (checkLastTag) {
             checkLastTag.remove();
           }
-          const newDiv = createInfo(matchedTag);
-          selectedTweetTag.appendChild(newDiv);
+          // const newDiv = createInfo(matchedTag);
+          console.log('Matched Tag: ', matchedTag);
+          // selectedTweetTag.appendChild(newDiv);
         }
       }
     }
-    //  Array.from(selectedTweetTag).filter(content => return Array.from(content.classList).length === 1)
-    // const userName = parseUsername(selectedUserTag.children[0]?.textContent);
-
-    // Old code. Delete
-    const matchedUser = dataMap.get(userName);
-    const checkLastTag = selectedUserTag.querySelector(`.${CLASS_FOR_TAG}`);
-
-    if (matchedUser) {
-      if (checkLastTag) {
-        checkLastTag.remove();
-      }
-      const newDiv = createInfo(matchedUser);
-      selectedUserTag.appendChild(newDiv);
-    }
   }
-
-  const userNameTags = document.querySelectorAll("[data-testid='User-Name']");
-  userNameTags.forEach((tag) => {
-    const userName = parseUsername(tag.textContent);
-
-    const matchedUser = dataMap.get(userName);
-    const checkLastTag = tag.parentNode.querySelector(`.${CLASS_FOR_TAG}`);
-
-    if (matchedUser && !checkLastTag) {
-      const firstLeefNode = getFirstLeefNode(tag);
-
-      firstLeefNode.style.color = '#7fbaee';
-      const newDiv = createInfo(matchedUser);
-      tag.parentNode.appendChild(newDiv);
-    }
-  });
-
-  const userCellTags = document.querySelectorAll("[data-testid='UserCell']");
-  userCellTags.forEach((tag) => {
-    const aTag = tag.querySelectorAll('a')?.[1];
-    if (!aTag) {
-      return;
-    }
-    const targetTag = aTag.parentElement.parentElement;
-
-    const userName = parseUsername(targetTag.textContent);
-
-    const matchedUser = dataMap.get(userName);
-    const checkLastTag = targetTag.parentNode.querySelector(
-      `.${CLASS_FOR_TAG}`
-    );
-
-    if (matchedUser && !checkLastTag) {
-      const firstLeefNode = getFirstLeefNode(targetTag);
-
-      firstLeefNode.style.color = '#7fbaee';
-      const newDiv = createInfo(matchedUser);
-
-      const targetContainerWidth =
-        targetTag.parentNode?.parentNode?.offsetWidth || 300;
-      if (targetContainerWidth <= 280) {
-        newDiv.children[newDiv.children.length - 1].remove();
-      }
-      targetTag.parentNode.appendChild(newDiv);
-    }
-  });
 }
 
 function createInfo(matchedUser) {
@@ -214,7 +136,6 @@ function createInfo(matchedUser) {
 
   newDiv.classList.add(CLASS_FOR_TAG);
   newDiv.style.display = 'block';
-  newDiv.style.alignItems = 'center';
   newDiv.style.fontFamily = 'TwitterChirp';
 
   const rankDisplay = matchedUser.rank
