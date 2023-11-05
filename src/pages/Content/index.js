@@ -5,36 +5,49 @@ import {
   STORAGE_KEY,
 } from '../../../utils/constant';
 
-const INTERVAL_MS = 2000;
-
 const dataMap = new Map();
 
 const fontColor = '#888';
 const emphasizeColor = '#d2d2d2';
 
-let intervalId = null;
-
 console.log('content');
 
-//
+const onMutation = (mutations) => {
+  for (const { addedNodes } of mutations) {
+    for (const node of addedNodes) {
+      if (node) {
+        if (node.dataset && node.dataset.testid) {
+          // console.log("node.dataset.testid=" + node.dataset.testid)
+          if (node.dataset.testid === 'cellInnerDiv') {
+            fetchAndAttach(node);
+          }
+        }
+      }
+    }
+  }
+  return true;
+};
 
+const mo = new MutationObserver(onMutation);
 const startProcess = () => {
-  intervalId = setInterval(fetchAndAttach, INTERVAL_MS);
-  console.log('Start');
+  mo.observe(document, {
+    subtree: true,
+    childList: true,
+  });
+
   fetchAndAttach();
 };
 
 const stopProcess = () => {
-  clearInterval(intervalId);
-  intervalId = null;
+  mo.disconnect();
   const tags = document.querySelectorAll(`.${CLASS_FOR_TAG}`);
   tags.forEach((tag) => tag.remove());
 };
 
-const fetchAndAttach = async () => {
+const fetchAndAttach = async (node) => {
   console.log('fetchAndAttach');
 
-  const cashtags = getTweetCashtags();
+  const cashtags = getTweetCashtags(node);
   const newCashTags = cashtags.filter((cashtag) => !dataMap.has(cashtag));
 
   try {
@@ -47,17 +60,21 @@ const fetchAndAttach = async () => {
   }
 };
 
-const getTweetCashtags = () => {
-  const tweets = Array.from(
-    document.querySelectorAll("[data-testid='tweetText']")
-  );
-
-  const linkUrls = tweets
-    .map((content) =>
-      Array.from(content.querySelectorAll('a'))
-        .map((element) => element.href)
-        .filter((url) => cashtag_regex.test(url))
-    )
+const getTweetCashtags = (node) => {
+  const tweets = node.querySelectorAll("[data-testid='tweetText']");
+  const linkUrls = Array.from(tweets)
+    .map((content) => {
+      let cashtag_className = null;
+      const links = Array.from(content.querySelectorAll('a')).map((element) => {
+        cashtag_className = element.textContent.replace('$', '').toUpperCase();
+        return element.href;
+      });
+      const match = links.some((url) => cashtag_regex.test(url));
+      if (match) {
+        content.classList.add(cashtag_className);
+      }
+      return links;
+    })
     .flat();
 
   return FromLinksToCashtags(linkUrls);
@@ -113,16 +130,13 @@ function attachInfoTag() {
     for (let cashtag_span of cashtag_spans) {
       let cashtag = cashtag_span.textContent.replace('$', '').toUpperCase();
       const matchedTag = dataMap.get(cashtag);
-      // const checkLastTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
-      const checkLastTag = selectedTweetTag.querySelector(`#${cashtag}`);
+      const checkLastTag = selectedTweetTag.querySelector(`.${cashtag}`);
       if (matchedTag) {
         if (checkLastTag) {
           checkLastTag.remove();
         }
-        // const newDiv = createInfo(matchedTag);
-        console.log('Matched Tag: ', matchedTag);
-        console.log('check last Tag: ', checkLastTag);
-        // selectedTweetTag.appendChild(newDiv);
+        const newDiv = createInfo(matchedTag);
+        selectedTweetTag.appendChild(newDiv);
       }
     }
   }
@@ -131,8 +145,11 @@ function attachInfoTag() {
 function createInfo(tokenInfo) {
   const newDiv = document.createElement('div');
 
-  // newDiv.classList.add(CLASS_FOR_TAG);
-  newDiv.id = tokenInfo.symbol;
+  let { twitter, symbol, imageThumbUrl, priceChange, volume, address, price } =
+    tokenInfo;
+
+  newDiv.classList.add(symbol);
+  newDiv.id = symbol;
   newDiv.style.display = 'block';
   newDiv.style.fontFamily = 'TwitterChirp';
   newDiv.style.border = '1px solid #d2d2d2';
@@ -142,29 +159,36 @@ function createInfo(tokenInfo) {
   newDiv.style.fontSize = '12px';
   newDiv.style.color = fontColor;
 
-  const price = tokenInfo.price;
+  // Image and Symbol
+  const imageNode = createImage(imageThumbUrl, symbol);
+  const symbolNode = createSpan(symbol);
+  symbol.insertAdjacentElement('beforebegin', imageNode);
 
-  const addressLink = createLink(
-    `https://friend.tech/rooms/${tokenInfo.address}`
-  );
-  const trophyAndPriceLink = createLink(
-    `https://friendmex.com/?address=${tokenInfo.address}`
-  );
+  // Price, 24H Change and Volume
+  const priceNode = createSpan(`💲 ${price}`);
+  const priceChangeNode = createSpan(`📈 ${priceChange}%`);
+  const volumeNode = createSpan(`💹 ${volume}`);
 
-  const content = `${price}   📭 `;
-  const addressShort = `${tokenInfo.address.substring(
-    0,
-    6
-  )}...${tokenInfo.address.slice(-4)}`;
-
-  const displayNode = createSpan(content);
+  // Address and Link
+  const addressShort = `${address.substring(0, 6)}...${address.slice(-4)}`;
+  const addressLink = createLink(`https://www.defined.fi/${address}`);
   const addressNode = createSpan(addressShort);
-
   addressLink.appendChild(addressNode);
-  trophyAndPriceLink.appendChild(displayNode);
 
-  newDiv.appendChild(trophyAndPriceLink);
+  newDiv.appendChild(symbolNode);
+  newDiv.appendChild(priceNode);
+  newDiv.appendChild(priceChangeNode);
+  newDiv.appendChild(volumeNode);
   newDiv.appendChild(addressLink);
+
+  // Socials
+  if (twitter) {
+    const twitterLink = createLink(`https://twitter.com/${twitter}`);
+    const twitterNode = createSpan(`🐦 @${twitter}`);
+    twitterLink.appendChild(twitterNode);
+    newDiv.appendChild(twitterLink);
+  }
+
   return newDiv;
 }
 
@@ -188,6 +212,17 @@ function createLink(href) {
     });
   });
   return link;
+}
+
+function createImage(url, symbol) {
+  const image = document.createElement('img');
+  image.src = url;
+  image.style.width = '16px';
+  image.style.height = '16px';
+  image.style.verticalAlign = 'middle';
+  image.style.display = 'inline';
+  image.alt = symbol;
+  return image;
 }
 
 function createSpan(text, className = '') {
