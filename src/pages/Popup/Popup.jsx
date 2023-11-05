@@ -13,8 +13,7 @@ const Popup = () => {
   const { connect, isLoading, connectors, isError, isSuccess } = useConnect();
   const account = isMounted && address ? address.toLowerCase() : null;
   const [height, setHeight] = useState('');
-
-  const [isViewStat, setViewStat] = useState(null)
+  const [isViewStat, setViewStat] = useState(false)
 
   const onClickSwitch = () => {
     setViewStat((prev) => {
@@ -75,8 +74,8 @@ const Popup = () => {
           </>
         )}
         {isViewStat !== null &&
-          <div onClick={() => onClickSwitch()}>
-            <SwitchBtn isChecked={isViewStat} />
+          <div onClick={() => onClickSwitch()} className="c-white fs-md">
+           {`Turn off Widget`} <SwitchBtn isChecked={isViewStat} />
           </div>
         }
       </section>

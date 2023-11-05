@@ -14,6 +14,8 @@ const emphasizeColor = '#d2d2d2';
 
 let intervalId = null;
 
+console.log('content');
+
 //
 
 const startProcess = () => {
@@ -58,8 +60,7 @@ const getTweetCashtags = () => {
     )
     .flat();
 
-  const cashtags = FromLinksToCashtags(linkUrls);
-  return cashtags;
+  return FromLinksToCashtags(linkUrls);
 };
 
 const FromLinksToCashtags = (urls) => {
@@ -69,23 +70,19 @@ const FromLinksToCashtags = (urls) => {
     let [i1, i2] = [url.indexOf('%24'), url.indexOf('&src')];
     let token = url.slice(i1 + 3, i2);
     if (token.length >= 3 && token.length <= 5) {
-      uniqueCashTags.add(token);
+      uniqueCashTags.add(token.toUpperCase());
     }
   }
 
-  const cashtags = Array.from(uniqueCashTags);
-  return cashtags;
+  return Array.from(uniqueCashTags);
 };
 
 const setTokensInfo = (data) => {
   if (!Array.isArray(data) || data.length === 0) {
     return;
   }
-  console.log('setTokensInfo: ', data);
   data.forEach((value) => {
-    console.log('setTokensInfo Value: ', value);
-    console.log('DataMap: ', dataMap);
-    dataMap.set(value.twitterusername, value);
+    dataMap.set(value.symbol, value);
   }, {});
 };
 
@@ -107,57 +104,58 @@ const getTokensInfo = async (cashtags) => {
 };
 
 function attachInfoTag() {
-  const selectedTweetTag = document.querySelector(
-    "[data-testid='tweetText']"
-  ).children;
+  const selectedTweetTag = document.querySelector("[data-testid='tweetText']");
   if (selectedTweetTag) {
-    for (let tag of Array.from(selectedTweetTag)) {
-      if (Array.from(tag.classList).length === 1) {
-        let cashtag = tag.textContent.replace('$', '');
-        const matchedTag = dataMap.get(cashtag);
-        const checkLastTag = selectedTweetTag.querySelector(
-          `.${CLASS_FOR_TAG}`
-        );
-        if (matchedTag) {
-          if (checkLastTag) {
-            checkLastTag.remove();
-          }
-          // const newDiv = createInfo(matchedTag);
-          console.log('Matched Tag: ', matchedTag);
-          // selectedTweetTag.appendChild(newDiv);
+    const children = selectedTweetTag.children;
+    const cashtag_spans = Array.from(children).filter(
+      (child) => Array.from(child.classList).length === 1
+    );
+    for (let cashtag_span of cashtag_spans) {
+      let cashtag = cashtag_span.textContent.replace('$', '').toUpperCase();
+      const matchedTag = dataMap.get(cashtag);
+      // const checkLastTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
+      const checkLastTag = selectedTweetTag.querySelector(`#${cashtag}`);
+      if (matchedTag) {
+        if (checkLastTag) {
+          checkLastTag.remove();
         }
+        // const newDiv = createInfo(matchedTag);
+        console.log('Matched Tag: ', matchedTag);
+        console.log('check last Tag: ', checkLastTag);
+        // selectedTweetTag.appendChild(newDiv);
       }
     }
   }
 }
 
-function createInfo(matchedUser) {
+function createInfo(tokenInfo) {
   const newDiv = document.createElement('div');
 
-  newDiv.classList.add(CLASS_FOR_TAG);
+  // newDiv.classList.add(CLASS_FOR_TAG);
+  newDiv.id = tokenInfo.symbol;
   newDiv.style.display = 'block';
   newDiv.style.fontFamily = 'TwitterChirp';
+  newDiv.style.border = '1px solid #d2d2d2';
+  newDiv.style.borderRadius = '4px';
+  newDiv.style.padding = '4px 8px';
+  newDiv.style.margin = '4px 0px';
+  newDiv.style.fontSize = '12px';
+  newDiv.style.color = fontColor;
 
-  const rankDisplay = matchedUser.rank
-    ? `🏆 ${matchedUser.rank}`
-    : '🏆 >2000  ';
-
-  const costDisplay = matchedUser.cost
-    ? `💎 ${parseFloat(matchedUser.cost).toFixed(4)} E  `
-    : '💎 - E  ';
+  const price = tokenInfo.price;
 
   const addressLink = createLink(
-    `https://friend.tech/rooms/${matchedUser.address}`
+    `https://friend.tech/rooms/${tokenInfo.address}`
   );
   const trophyAndPriceLink = createLink(
-    `https://friendmex.com/?address=${matchedUser.address}`
+    `https://friendmex.com/?address=${tokenInfo.address}`
   );
 
-  const content = `${rankDisplay}  ${costDisplay}  📭 `;
-  const addressShort = `${matchedUser.address.substring(
+  const content = `${price}   📭 `;
+  const addressShort = `${tokenInfo.address.substring(
     0,
     6
-  )}...${matchedUser.address.slice(-4)}`;
+  )}...${tokenInfo.address.slice(-4)}`;
 
   const displayNode = createSpan(content);
   const addressNode = createSpan(addressShort);
@@ -202,12 +200,6 @@ function createSpan(text, className = '') {
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {
-  console.log('Chrome Storage Values: ', values);
-  console.log(
-    'Chrome Storage Values hasOwn: ',
-    values.hasOwnProperty(STORAGE_KEY)
-  );
-  console.log('Chrome Storage Values val[]: ', values[STORAGE_KEY]);
   if (values.hasOwnProperty(STORAGE_KEY) && values[STORAGE_KEY]) {
     setTimeout(startProcess, 300);
   }
@@ -218,7 +210,6 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
   for (let key in changes) {
     if (key === STORAGE_KEY) {
       const newValue = changes[key].newValue;
-      console.log('NEW VALUE in Content Listener: ', newValue);
       if (newValue) {
         console.log('start interval');
         startProcess();

@@ -1,6 +1,8 @@
 import { MS_GET_TOKEN_INFO } from '../../../utils/constant';
 import { getTokenInfo } from '../../apis/serverAPI';
 
+console.log('background');
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log('back msg', message, sender, sendResponse);
 

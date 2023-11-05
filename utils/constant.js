@@ -1,6 +1,6 @@
 export const STORAGE_KEY = 'x_defi-view';
 
-export const SERVER_URL = `https://friendtechgems-92592dffe170.herokuapp.com`;
+export const SERVER_URL = `http://localhost:4000`;
 
 export const MS_GET_TOKEN_INFO = 'GET_TOKEN_INFO';
 
