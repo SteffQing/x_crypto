@@ -191,9 +191,8 @@ function createInfo(tokenInfo) {
   const volumeNode = createSpan(`💹 $${formatVolume(volume)}`);
 
   // Chart and Buy/Sell
-  // const chartNode = createChartNode(newDiv, bar);
-  // console.log(typeof chartNode, bar);
-  const viewChartNode = createSpan('📊 Chart', 'CHART');
+  const chartNode = createChartNode(bar);
+  const viewChartNode = createSpan('📊 Chart', 'CHART', chartNode);
   const viewBuySellModal = createSpan('💱 Trade', 'Trade');
 
   // Address and Link
@@ -220,6 +219,7 @@ function createInfo(tokenInfo) {
   }
   newDiv.appendChild(viewChartNode);
   newDiv.appendChild(viewBuySellModal);
+  newDiv.appendChild(chartNode);
 
   return newDiv;
 }
@@ -258,7 +258,7 @@ function createImage(url, symbol) {
   return image;
 }
 
-function createSpan(text, type = false, className = '') {
+function createSpan(text, type = false, elem = null) {
   const span = document.createElement('span');
   if (type === 'PRICE') {
     const subscriptNode = document.createElement('sub');
@@ -279,15 +279,16 @@ function createSpan(text, type = false, className = '') {
   } else {
     span.textContent = text;
     if (type === 'CHART') {
-      span.addEventListener('mouseover', () => {});
+      span.addEventListener('mouseover', () => {
+        elem.style.display = 'block';
+      });
       span.addEventListener('mouseout', () => {
         setTimeout(() => {
-          // chart.remove();
+          elem.style.display = 'none';
         }, 5000);
       });
     }
   }
-  span.className = `${className}`;
   span.style.whiteSpace = 'nowrap';
   return span;
 }
@@ -304,15 +305,22 @@ function createDiv(element1, element2) {
   return div;
 }
 
-function createChartNode(newDiv, chartData) {
-  const chart = createChart(newDiv, chartOptions);
-  console.log('Chart created: ', chart);
-  const candleSeries = chart.addCandlestickSeries(candleSeriesSettings);
-  console.log('Series created: ', candleSeries);
-  candleSeries.setData(chartData);
-  console.log('Data set: ', chartData);
+function createChartNode(chartData) {
+  const chartElement = document.createElement('div');
 
-  return candleSeries;
+  const chart = createChart(chartElement, chartOptions);
+  const candleSeries = chart.addCandlestickSeries(candleSeriesSettings);
+  candleSeries.setData(chartData);
+
+  chartElement.style.position = 'absolute';
+  chartElement.style.top = '0';
+  chartElement.style.right = '0';
+  chartElement.style.width = '100%';
+  chartElement.style.height = '100%';
+  chartElement.style.zIndex = '999';
+  chartElement.style.display = 'none';
+
+  return chartElement;
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {
