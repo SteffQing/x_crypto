@@ -54,7 +54,6 @@ async function searchToken(name) {
     { name: name }
   );
   if (errors) {
-    // handle those errors like a pro
     console.error(errors);
     return null;
   }
@@ -68,7 +67,6 @@ async function fetchTokenSocials(address, networkId) {
     { address: address, networkId: num(networkId) }
   );
   if (errors) {
-    // handle those errors like a pro
     console.error(errors);
     return null;
   }
