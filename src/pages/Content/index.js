@@ -63,16 +63,21 @@ const fetchAndAttach = async (node) => {
 };
 
 const getTweetCashtags = (node) => {
-  const tweets = node.querySelectorAll("[data-testid='tweetText']");
-  const linkUrls = Array.from(tweets)
-    .map((content) =>
-      Array.from(content.querySelectorAll('a'))
-        .map((element) => element.href)
-        .filter((url) => cashtag_regex.test(url))
-    )
-    .flat();
+  try {
+    const tweets = node.querySelectorAll("[data-testid='tweetText']");
+    const linkUrls = Array.from(tweets)
+      .map((content) =>
+        Array.from(content.querySelectorAll('a'))
+          .map((element) => element.href)
+          .filter((url) => cashtag_regex.test(url))
+      )
+      .flat();
 
-  return FromLinksToCashtags(linkUrls);
+    return FromLinksToCashtags(linkUrls);
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
 };
 
 const FromLinksToCashtags = (urls) => {
