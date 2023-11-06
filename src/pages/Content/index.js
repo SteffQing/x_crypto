@@ -151,8 +151,16 @@ function attachInfoTag() {
 function createInfo(tokenInfo) {
   const newDiv = document.createElement('div');
 
-  let { twitter, symbol, imageThumbUrl, priceChange, volume, address, price } =
-    tokenInfo;
+  let {
+    twitter,
+    symbol,
+    imageThumbUrl,
+    priceChange,
+    volume,
+    address,
+    price,
+    bar,
+  } = tokenInfo;
 
   newDiv.classList.add(CLASS_FOR_TAG);
   newDiv.id = symbol;
@@ -178,8 +186,10 @@ function createInfo(tokenInfo) {
   const priceNode = createSpan(`${price}`, 'PRICE');
   const priceChangeNode = createSpan(`📈${num(priceChange).toFixed(2)}%`);
   const volumeNode = createSpan(`💹$${formatVolume(volume)}`);
-  const chartNode = createChartNode(newDiv);
+  const chartNode = createChartNode(newDiv, bar);
+  console.log(typeof chartNode);
   const viewChartNode = createSpan('📊 View Chart', 'CHART');
+  const viewBuySellModal = createSpan('💱 Buy/Sell', 'BS');
 
   // Address and Link
   const addressShort = `⛓️${address.substring(0, 6)}...${address.slice(-4)}`;
@@ -201,6 +211,7 @@ function createInfo(tokenInfo) {
     newDiv.appendChild(twitterLink);
   }
   newDiv.appendChild(viewChartNode);
+  newDiv.appendChild(viewBuySellModal);
 
   return newDiv;
 }
@@ -289,15 +300,7 @@ function createChartNode(newDiv, chartData) {
   const chart = createChart(newDiv, chartOptions);
 
   const candleSeries = chart.addCandlestickSeries(candleSeriesSettings);
-  candleSeries.setData(
-    chartData.map((option) => ({
-      time: option.time,
-      open: option.o,
-      high: option.high,
-      low: option.low,
-      close: option.close,
-    }))
-  );
+  candleSeries.setData(chartData);
 
   return candleSeries;
 }

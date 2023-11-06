@@ -16,8 +16,9 @@ app.get('/', async (req, res) => {
     const searchResult = await searchToken(symbol);
     const { address, networkId } = searchResult;
     const socialsResults = await fetchTokenSocials(address, networkId);
+    const bar = await getChart(address, networkId);
     const { twitter } = socialsResults.socialLinks;
-    results.push({ ...searchResult, twitter });
+    results.push({ ...searchResult, twitter, bar });
   }
   res.json(results);
 });

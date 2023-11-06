@@ -102,7 +102,19 @@ async function getChart(address, networkId) {
     console.error(errors);
     return null;
   }
-  return data.getBars;
+  const bars = [];
+  const { o, c, l, h, t } = data.getBars;
+  for (let i = 0; i < o.length; i++) {
+    let _time = new Date(t[i] * 1000).toISOString().split('T')[0];
+    bars.push({
+      time: _time,
+      open: o[i],
+      close: c[i],
+      low: l[i],
+      high: h[i],
+    });
+  }
+  return bars;
 }
 
 module.exports = { searchToken, fetchTokenSocials, getChart, num };
