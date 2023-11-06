@@ -1,9 +1,11 @@
+import { num } from '../../../server/fragments';
 import { cashtag_regex } from '../../../utils';
 import {
   CLASS_FOR_TAG,
   MS_GET_TOKEN_INFO,
   STORAGE_KEY,
 } from '../../../utils/constant';
+import { formatVolume, stripPrice, stripSocials } from './utils';
 
 const dataMap = new Map();
 
@@ -63,18 +65,11 @@ const fetchAndAttach = async (node) => {
 const getTweetCashtags = (node) => {
   const tweets = node.querySelectorAll("[data-testid='tweetText']");
   const linkUrls = Array.from(tweets)
-    .map((content) => {
-      let cashtag_className = null;
-      const links = Array.from(content.querySelectorAll('a')).map((element) => {
-        cashtag_className = element.textContent.replace('$', '').toUpperCase();
-        return element.href;
-      });
-      const match = links.some((url) => cashtag_regex.test(url));
-      if (match) {
-        content.classList.add(cashtag_className);
-      }
-      return links;
-    })
+    .map((content) =>
+      Array.from(content.querySelectorAll('a'))
+        .map((element) => element.href)
+        .filter((url) => cashtag_regex.test(url))
+    )
     .flat();
 
   return FromLinksToCashtags(linkUrls);
@@ -130,7 +125,7 @@ function attachInfoTag() {
     for (let cashtag_span of cashtag_spans) {
       let cashtag = cashtag_span.textContent.replace('$', '').toUpperCase();
       const matchedTag = dataMap.get(cashtag);
-      const checkLastTag = selectedTweetTag.querySelector(`.${cashtag}`);
+      const checkLastTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
       if (matchedTag) {
         if (checkLastTag) {
           checkLastTag.remove();
@@ -148,9 +143,12 @@ function createInfo(tokenInfo) {
   let { twitter, symbol, imageThumbUrl, priceChange, volume, address, price } =
     tokenInfo;
 
-  newDiv.classList.add(symbol);
+  newDiv.classList.add(CLASS_FOR_TAG);
   newDiv.id = symbol;
-  newDiv.style.display = 'block';
+  newDiv.style.display = 'flex';
+  newDiv.style.alignItems = 'center';
+  newDiv.style.backgroundColor = '#fff';
+  newDiv.style.gap = '6px';
   newDiv.style.fontFamily = 'TwitterChirp';
   newDiv.style.border = '1px solid #d2d2d2';
   newDiv.style.borderRadius = '4px';
@@ -162,12 +160,12 @@ function createInfo(tokenInfo) {
   // Image and Symbol
   const imageNode = createImage(imageThumbUrl, symbol);
   const symbolNode = createSpan(symbol);
-  symbol.insertAdjacentElement('beforebegin', imageNode);
+  const imageSymbolNode = createDiv(imageNode, symbolNode);
 
   // Price, 24H Change and Volume
-  const priceNode = createSpan(`💲 ${price}`);
-  const priceChangeNode = createSpan(`📈 ${priceChange}%`);
-  const volumeNode = createSpan(`💹 ${volume}`);
+  const priceNode = createSpan(`${price}`, '', true);
+  const priceChangeNode = createSpan(`📈${num(priceChange).toFixed(2)}%`);
+  const volumeNode = createSpan(`💹$${formatVolume(volume)}`);
 
   // Address and Link
   const addressShort = `${address.substring(0, 6)}...${address.slice(-4)}`;
@@ -175,7 +173,7 @@ function createInfo(tokenInfo) {
   const addressNode = createSpan(addressShort);
   addressLink.appendChild(addressNode);
 
-  newDiv.appendChild(symbolNode);
+  newDiv.appendChild(imageSymbolNode);
   newDiv.appendChild(priceNode);
   newDiv.appendChild(priceChangeNode);
   newDiv.appendChild(volumeNode);
@@ -183,8 +181,8 @@ function createInfo(tokenInfo) {
 
   // Socials
   if (twitter) {
-    const twitterLink = createLink(`https://twitter.com/${twitter}`);
-    const twitterNode = createSpan(`🐦 @${twitter}`);
+    const twitterLink = createLink(twitter);
+    const twitterNode = createSpan(`🐦 @${stripSocials(twitter)}`);
     twitterLink.appendChild(twitterNode);
     newDiv.appendChild(twitterLink);
   }
@@ -221,17 +219,48 @@ function createImage(url, symbol) {
   image.style.height = '16px';
   image.style.verticalAlign = 'middle';
   image.style.display = 'inline';
+  image.style.borderRadius = '50%';
   image.alt = symbol;
   return image;
 }
 
-function createSpan(text, className = '') {
+function createSpan(text, className = '', price = false) {
   const span = document.createElement('span');
-  span.textContent = text;
+  if (price) {
+    const subscriptNode = document.createElement('sub');
+    const { subscript, value } = stripPrice(text);
+    subscriptNode.textContent = subscript;
+    subscriptNode.style.fontSize = '8px';
+    subscriptNode.style.verticalAlign = 'middle';
+
+    const container = document.createElement('span');
+    const zeroText = document.createTextNode('0.0,');
+
+    // Append the parts to the container
+    container.appendChild(zeroText);
+    container.appendChild(subscriptNode);
+    container.appendChild(document.createTextNode(value));
+
+    // Append the container to the parent span element
+    span.appendChild(container);
+  } else {
+    span.textContent = text;
+  }
   span.className = `${className}`;
-  span.style.fontSize = '12px';
-  span.style.color = fontColor;
+  span.style.whiteSpace = 'nowrap';
   return span;
+}
+
+function createDiv(element1, element2) {
+  const div = document.createElement('div');
+  div.style.display = 'flex';
+  div.style.alignItems = 'center';
+  div.style.gap = '4px';
+
+  div.appendChild(element1);
+  div.appendChild(element2);
+
+  return div;
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {

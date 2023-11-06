@@ -75,4 +75,4 @@ async function fetchTokenSocials(address, networkId) {
   return data.token;
 }
 
-module.exports = { searchToken, fetchTokenSocials };
+module.exports = { searchToken, fetchTokenSocials, num };
