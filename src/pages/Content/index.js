@@ -12,6 +12,7 @@ import {
 } from '../../../utils/constant';
 import { createChart } from 'lightweight-charts';
 import { candleSeriesSettings, chartOptions } from './Chart';
+import { Networks } from './Networks';
 
 const dataMap = new Map();
 
@@ -158,6 +159,7 @@ function createInfo(tokenInfo) {
     priceChange,
     volume,
     address,
+    networkId,
     price,
     bar,
   } = tokenInfo;
@@ -166,6 +168,7 @@ function createInfo(tokenInfo) {
   newDiv.id = symbol;
   newDiv.style.display = 'flex';
   newDiv.style.alignItems = 'center';
+  newDiv.style.justifyContent = 'space-between';
   newDiv.style.backgroundColor = '#fff';
   newDiv.style.gap = '6px';
   newDiv.style.fontFamily = 'TwitterChirp';
@@ -190,13 +193,15 @@ function createInfo(tokenInfo) {
   // Chart and Buy/Sell
   // const chartNode = createChartNode(newDiv, bar);
   // console.log(typeof chartNode, bar);
-  console.log('bar: ', bar);
   const viewChartNode = createSpan('📊 Chart', 'CHART');
   const viewBuySellModal = createSpan('💱 Trade', 'Trade');
 
   // Address and Link
+  const network = Networks.find((network) => network.id === networkId).name;
   const addressShort = `⛓️${address.substring(0, 6)}...${address.slice(-4)}`;
-  const addressLink = createLink(`https://www.defined.fi/${address}`);
+  const addressLink = createLink(
+    `https://www.defined.fi/${network}/${address}`
+  );
   const addressNode = createSpan(addressShort);
   addressLink.appendChild(addressNode);
 
