@@ -44,7 +44,29 @@ const startProcess = () => {
     childList: true,
   });
 
+  addPortfolio();
   fetchAndAttach();
+};
+
+const addPortfolio = () => {
+  const tab = document.querySelector("[aria-label='Primary']");
+  const portfolio = createLink('/portfolio');
+  const firstChild = tab.firstChild;
+  portfolio.classList = firstChild.classList;
+  const portfolioDiv1 = document.createElement('div');
+  portfolioDiv1.classList = firstChild.firstChild.classList;
+  const portfolioDiv2 = document.createElement('div');
+  portfolioDiv2.classList = firstChild.firstChild.firstChild.classList;
+  const portfolioSvg = createPortfolioSVG(
+    firstChild.firstChild.firstChild.firstChild.classList
+  );
+
+  // Append the parts to the container
+  portfolioDiv2.appendChild(portfolioSvg);
+  portfolioDiv1.appendChild(portfolioDiv2);
+  portfolio.appendChild(portfolioDiv1);
+
+  tab.insertBefore(portfolio, firstChild.nextSibling);
 };
 
 const stopProcess = () => {
@@ -316,11 +338,38 @@ function createChartNode(chartData) {
   chartElement.style.top = '0';
   chartElement.style.right = '0';
   chartElement.style.width = '100%';
-  chartElement.style.height = '100%';
   chartElement.style.zIndex = '999';
   chartElement.style.display = 'none';
 
   return chartElement;
+}
+
+function createPortfolioSVG(classList) {
+  const svgElement = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    'svg'
+  );
+  svgElement.setAttribute('width', '24px');
+  svgElement.setAttribute('height', '24px');
+  svgElement.setAttribute('viewBox', '0 0 32 32');
+  svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+  svgElement.setAttribute('id', 'icon');
+
+  // Title element
+  const gElement = document.createElement('g');
+
+  // Path element
+  const pathElement = document.createElement('path');
+  pathElement.setAttribute(
+    'd',
+    'M28,10H22V6a2,2,0,0,0-2-2H12a2,2,0,0,0-2,2v4H4a2,2,0,0,0-2,2V26a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM12,6h8v4H12ZM4,26V12H28V26Z'
+  );
+
+  // Append the title and path elements to the SVG
+  svgElement.classList = classList;
+  gElement.appendChild(pathElement);
+  svgElement.appendChild(gElement);
+  return svgElement;
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {
