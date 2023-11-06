@@ -184,14 +184,15 @@ function createInfo(tokenInfo) {
 
   // Price, 24H Change and Volume
   const priceNode = createSpan(`${price}`, 'PRICE');
-  const priceChangeNode = createSpan(`📈${num(priceChange).toFixed(2)}%`);
-  const volumeNode = createSpan(`💹$${formatVolume(volume)}`);
+  const priceChangeNode = createSpan(`📈 ${num(priceChange).toFixed(2)}%`);
+  const volumeNode = createSpan(`💹 $${formatVolume(volume)}`);
 
   // Chart and Buy/Sell
-  const chartNode = createChartNode(newDiv, bar);
-  console.log(typeof chartNode, bar);
-  const viewChartNode = createSpan('📊 View Chart', 'CHART');
-  const viewBuySellModal = createSpan('💱 Buy/Sell', 'BS');
+  // const chartNode = createChartNode(newDiv, bar);
+  // console.log(typeof chartNode, bar);
+  console.log('bar: ', bar);
+  const viewChartNode = createSpan('📊 Chart', 'CHART');
+  const viewBuySellModal = createSpan('💱 Trade', 'Trade');
 
   // Address and Link
   const addressShort = `⛓️${address.substring(0, 6)}...${address.slice(-4)}`;

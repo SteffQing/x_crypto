@@ -105,6 +105,9 @@ async function getChart(address, networkId) {
   const bars = [];
   const { o, h, l, c, t } = data.getBars;
   for (let i = 0; i < o.length; i++) {
+    if (o[i] === null) {
+      continue;
+    }
     let _time = new Date(t[i] * 1000).toISOString().split('T')[0];
     bars.push({
       time: _time,
