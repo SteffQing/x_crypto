@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const { searchToken, fetchTokenSocials } = require('./fragments');
+const { searchToken, fetchTokenSocials, getChart } = require('./fragments');
 
 const app = express();
 
@@ -34,6 +34,14 @@ app.get('/socials', async (req, res) => {
   const { address, networkId } = req.query;
 
   const data = await fetchTokenSocials(address, networkId);
+
+  res.json(data);
+});
+
+app.get('/chart', async (req, res) => {
+  const { address, networkId } = req.query;
+
+  const data = await getChart(address, networkId);
 
   res.json(data);
 });

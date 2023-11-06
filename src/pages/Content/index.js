@@ -1,11 +1,17 @@
 import { num } from '../../../server/fragments';
-import { cashtag_regex } from '../../../utils';
+import {
+  cashtag_regex,
+  formatVolume,
+  stripPrice,
+  stripSocials,
+} from '../../../utils';
 import {
   CLASS_FOR_TAG,
   MS_GET_TOKEN_INFO,
   STORAGE_KEY,
 } from '../../../utils/constant';
-import { formatVolume, stripPrice, stripSocials } from './utils';
+import { createChart } from 'lightweight-charts';
+import { candleSeriesSettings, chartOptions } from './Chart';
 
 const dataMap = new Map();
 
@@ -75,7 +81,7 @@ const getTweetCashtags = (node) => {
 
     return FromLinksToCashtags(linkUrls);
   } catch (error) {
-    console.log(error);
+    console.log('Tweets lookup error: ', error.message || "Can't find tweets");
     return [];
   }
 };
@@ -160,6 +166,7 @@ function createInfo(tokenInfo) {
   newDiv.style.padding = '4px 8px';
   newDiv.style.margin = '4px 0px';
   newDiv.style.fontSize = '12px';
+  newDiv.style.position = 'relative';
   newDiv.style.color = fontColor;
 
   // Image and Symbol
@@ -167,13 +174,15 @@ function createInfo(tokenInfo) {
   const symbolNode = createSpan(symbol);
   const imageSymbolNode = createDiv(imageNode, symbolNode);
 
-  // Price, 24H Change and Volume
-  const priceNode = createSpan(`${price}`, '', true);
+  // Price, 24H Change, Volume and Chart
+  const priceNode = createSpan(`${price}`, 'PRICE');
   const priceChangeNode = createSpan(`📈${num(priceChange).toFixed(2)}%`);
   const volumeNode = createSpan(`💹$${formatVolume(volume)}`);
+  const chartNode = createChartNode(newDiv);
+  const viewChartNode = createSpan('📊 View Chart', 'CHART');
 
   // Address and Link
-  const addressShort = `${address.substring(0, 6)}...${address.slice(-4)}`;
+  const addressShort = `⛓️${address.substring(0, 6)}...${address.slice(-4)}`;
   const addressLink = createLink(`https://www.defined.fi/${address}`);
   const addressNode = createSpan(addressShort);
   addressLink.appendChild(addressNode);
@@ -191,6 +200,7 @@ function createInfo(tokenInfo) {
     twitterLink.appendChild(twitterNode);
     newDiv.appendChild(twitterLink);
   }
+  newDiv.appendChild(viewChartNode);
 
   return newDiv;
 }
@@ -229,17 +239,16 @@ function createImage(url, symbol) {
   return image;
 }
 
-function createSpan(text, className = '', price = false) {
+function createSpan(text, type = false, className = '') {
   const span = document.createElement('span');
-  if (price) {
+  if (type === 'PRICE') {
     const subscriptNode = document.createElement('sub');
     const { subscript, value } = stripPrice(text);
     subscriptNode.textContent = subscript;
     subscriptNode.style.fontSize = '8px';
-    subscriptNode.style.verticalAlign = 'middle';
 
     const container = document.createElement('span');
-    const zeroText = document.createTextNode('0.0,');
+    const zeroText = document.createTextNode('💲0.0');
 
     // Append the parts to the container
     container.appendChild(zeroText);
@@ -250,6 +259,14 @@ function createSpan(text, className = '', price = false) {
     span.appendChild(container);
   } else {
     span.textContent = text;
+    if (type === 'CHART') {
+      span.addEventListener('mouseover', () => {});
+      span.addEventListener('mouseout', () => {
+        setTimeout(() => {
+          // chart.remove();
+        }, 5000);
+      });
+    }
   }
   span.className = `${className}`;
   span.style.whiteSpace = 'nowrap';
@@ -266,6 +283,23 @@ function createDiv(element1, element2) {
   div.appendChild(element2);
 
   return div;
+}
+
+function createChartNode(newDiv, chartData) {
+  const chart = createChart(newDiv, chartOptions);
+
+  const candleSeries = chart.addCandlestickSeries(candleSeriesSettings);
+  candleSeries.setData(
+    chartData.map((option) => ({
+      time: option.time,
+      open: option.o,
+      high: option.high,
+      low: option.low,
+      close: option.close,
+    }))
+  );
+
+  return candleSeries;
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {

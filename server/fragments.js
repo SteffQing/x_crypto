@@ -46,6 +46,23 @@ const fetchTokenSocialsOperation = `
       }
     }
   `;
+const fetchTokenChartOperation = `
+query MyQuery($id:String!, $from:Int!, $to:Int! ) {
+  getBars(
+    symbol: $id
+    from: $from
+    to: $to
+    resolution: "60"
+    quoteToken: token1
+  ) {
+    o
+    h
+    l
+    c
+    t
+  }
+}
+`;
 
 async function searchToken(name) {
   const { errors, data } = await fetchGraphQL(
@@ -73,4 +90,19 @@ async function fetchTokenSocials(address, networkId) {
   return data.token;
 }
 
-module.exports = { searchToken, fetchTokenSocials, num };
+async function getChart(address, networkId) {
+  const id = `${address}:${networkId}`;
+  const to = Math.floor(new Date().getTime() / 1000);
+  const { errors, data } = await fetchGraphQL(
+    fetchTokenChartOperation,
+    'MyQuery',
+    { id: id, from: to - 86400, to: to }
+  );
+  if (errors) {
+    console.error(errors);
+    return null;
+  }
+  return data.getBars;
+}
+
+module.exports = { searchToken, fetchTokenSocials, getChart, num };
