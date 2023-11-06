@@ -182,12 +182,14 @@ function createInfo(tokenInfo) {
   const symbolNode = createSpan(symbol);
   const imageSymbolNode = createDiv(imageNode, symbolNode);
 
-  // Price, 24H Change, Volume and Chart
+  // Price, 24H Change and Volume
   const priceNode = createSpan(`${price}`, 'PRICE');
   const priceChangeNode = createSpan(`📈${num(priceChange).toFixed(2)}%`);
   const volumeNode = createSpan(`💹$${formatVolume(volume)}`);
+
+  // Chart and Buy/Sell
   const chartNode = createChartNode(newDiv, bar);
-  console.log(typeof chartNode);
+  console.log(typeof chartNode, bar);
   const viewChartNode = createSpan('📊 View Chart', 'CHART');
   const viewBuySellModal = createSpan('💱 Buy/Sell', 'BS');
 
@@ -298,9 +300,11 @@ function createDiv(element1, element2) {
 
 function createChartNode(newDiv, chartData) {
   const chart = createChart(newDiv, chartOptions);
-
+  console.log('Chart created: ', chart);
   const candleSeries = chart.addCandlestickSeries(candleSeriesSettings);
+  console.log('Series created: ', candleSeries);
   candleSeries.setData(chartData);
+  console.log('Data set: ', chartData);
 
   return candleSeries;
 }

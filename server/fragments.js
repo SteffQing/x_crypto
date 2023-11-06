@@ -1,3 +1,5 @@
+const { writeFileSync } = require('fs-extra');
+
 const DEFINED_APIKEY = 'KENXOgeSDb5dYmS1qlFi67JTW6MMPOqE5jfa6nv5';
 
 const num = (val) => Number(val) || 1;
@@ -103,15 +105,17 @@ async function getChart(address, networkId) {
     return null;
   }
   const bars = [];
-  const { o, c, l, h, t } = data.getBars;
+  const { o, h, l, c, t } = data.getBars;
+  console.log(Object.keys(data.getBars));
+  writeFileSync('data.json', JSON.stringify(data.getBars));
   for (let i = 0; i < o.length; i++) {
     let _time = new Date(t[i] * 1000).toISOString().split('T')[0];
     bars.push({
       time: _time,
       open: o[i],
-      close: c[i],
-      low: l[i],
       high: h[i],
+      low: l[i],
+      close: c[i],
     });
   }
   return bars;
