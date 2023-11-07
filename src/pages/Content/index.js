@@ -44,8 +44,17 @@ const startProcess = () => {
     childList: true,
   });
 
-  addPortfolio();
-  fetchAndAttach();
+  try {
+    addPortfolio();
+  } catch (error) {
+    console.log('Error: ', error.message);
+
+    // If an error occurred, wait for 5 seconds and then try again
+    setTimeout(() => {
+      console.log('Retrying after 5 seconds...');
+      addPortfolio();
+    }, 5000);
+  }
 };
 
 const addPortfolio = () => {
@@ -60,6 +69,11 @@ const addPortfolio = () => {
   const portfolioSvg = createPortfolioSVG(
     firstChild.firstChild.firstChild.firstChild.classList
   );
+
+  //
+  portfolio.ariaLabel = 'View your Portfolio';
+  portfolio.role = 'Portfolio';
+  portfolio.dataset.testid = 'Portfolio Tab';
 
   // Append the parts to the container
   portfolioDiv2.appendChild(portfolioSvg);
@@ -219,7 +233,7 @@ function createInfo(tokenInfo) {
 
   // Address and Link
   const network = Networks.find((network) => network.id === networkId).name;
-  const addressShort = `⛓️${address.substring(0, 6)}...${address.slice(-4)}`;
+  const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
   const addressLink = createLink(
     `https://www.defined.fi/${network}/${address}`
   );
@@ -289,6 +303,14 @@ function createSpan(text, type = false, elem = null) {
       span.textContent = `💲${value}`;
       return span;
     }
+    if (Number(subscript) === 0) {
+      span.textContent = `💲0.${value}`;
+      return span;
+    }
+    if (Number(subscript) === 1) {
+      span.textContent = `💲0.0${value}`;
+      return span;
+    }
     const subscriptNode = document.createElement('sub');
     subscriptNode.textContent = subscript;
     subscriptNode.style.fontSize = '8px';
@@ -353,26 +375,28 @@ function createPortfolioSVG(classList) {
     'http://www.w3.org/2000/svg',
     'svg'
   );
-  svgElement.setAttribute('width', '24px');
+  svgElement.ariaHidden = 'true';
+  svgElement.setAttribute('viewBox', '0 0 512 512');
+  svgElement.setAttribute('fill', '#000000');
   svgElement.setAttribute('height', '24px');
-  svgElement.setAttribute('viewBox', '0 0 32 32');
-  svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
-  svgElement.setAttribute('id', 'icon');
+  svgElement.setAttribute('width', '24px');
+  svgElement.classList = classList;
 
   // Title element
   const gElement = document.createElement('g');
+  const gElement2 = document.createElement('g');
 
   // Path element
   const pathElement = document.createElement('path');
   pathElement.setAttribute(
     'd',
-    'M28,10H22V6a2,2,0,0,0-2-2H12a2,2,0,0,0-2,2v4H4a2,2,0,0,0-2,2V26a2,2,0,0,0,2,2H28a2,2,0,0,0,2-2V12A2,2,0,0,0,28,10ZM12,6h8v4H12ZM4,26V12H28V26Z'
+    'M469.779,94.063H352.573l-9.106-36.426c-4.709-18.832-21.554-31.983-40.962-31.983h-93.011 c-19.408,0-36.253,13.152-40.963,31.984l-9.105,36.425H42.221C18.941,94.063,0,113.003,0,136.284v307.841 c0,23.281,18.941,42.221,42.221,42.221h427.557c23.281,0,42.221-18.941,42.221-42.221V136.284	C512,113.003,493.059,94.063,469.779,94.063z M184.086,61.528c2.922-11.682,13.371-19.841,25.409-19.841h93.011 c12.038,0,22.486,8.159,25.409,19.84l8.133,32.536h-18.732l-7.033-28.132c-0.891-3.569-4.098-6.072-7.777-6.072h-93.011	c-3.678,0-6.885,2.503-7.777,6.072l-7.031,28.132h-18.732L184.086,61.528z M300.789,94.063h-89.578l4.543-18.171h80.492	L300.789,94.063z M42.221,110.096h427.557c8.005,0,15.177,3.614,19.985,9.291l-52.05,156.149	c-4.736,14.208-17.98,23.754-32.957,23.754H289.67v-17.637c0-9.136-7.432-16.568-16.568-16.568h-34.205	c-9.136,0-16.568,7.432-16.568,16.568v17.637H107.243c-14.976,0-28.221-9.546-32.957-23.753l-52.05-156.15 C27.044,113.71,34.216,110.096,42.221,110.096z M238.363,316.393v-34.739c0-0.295,0.239-0.534,0.534-0.534h34.205 c0.295,0,0.534,0.239,0.534,0.534v34.739H238.363z M273.637,332.426v17.637c0,0.295-0.239,0.534-0.534,0.534h-34.205	c-0.295,0-0.534-0.239-0.534-0.534v-17.637H273.637z M495.967,444.125c0,14.44-11.748,26.188-26.188,26.188H42.221 c-14.44,0-26.188-11.748-26.188-26.188V151.481l43.042,129.126c6.922,20.765,26.279,34.717,48.168,34.717H222.33v34.739 c0,9.136,7.432,16.568,16.568,16.568h34.205c9.136,0,16.568-7.432,16.568-16.568v-34.739h115.087 c21.889,0,41.245-13.951,48.168-34.717l43.042-129.126V444.125z'
   );
 
   // Append the title and path elements to the SVG
-  svgElement.classList = classList;
   gElement.appendChild(pathElement);
-  svgElement.appendChild(gElement);
+  gElement2.appendChild(gElement);
+  svgElement.appendChild(gElement2);
   return svgElement;
 }
 

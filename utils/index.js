@@ -16,7 +16,7 @@ export function stripSocials(url) {
   return url.replace(/(https?:\/\/)?(www\.)?(twitter)\.com\/(#!\/)?/i, '');
 }
 export function stripPrice(price) {
-  if (Number(price) > 0) {
+  if (Math.floor(Number(price)) > 0) {
     return { subscript: null, value: formatVolume(price) };
   }
   // Split on decimal
