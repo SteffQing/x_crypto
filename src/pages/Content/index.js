@@ -179,7 +179,9 @@ function attachInfoTag() {
           checkLastTag.remove();
         }
         const newDiv = createInfo(matchedTag);
-        selectedTweetTag.appendChild(newDiv);
+        // selectedTweetTag.appendChild(newDiv);
+        const firstChild = selectedTweetTag.firstChild;
+        selectedTweetTag.insertBefore(newDiv, firstChild);
       }
     }
   }
@@ -303,11 +305,11 @@ function createSpan(text, type = false, elem = null) {
       span.textContent = `💲${value}`;
       return span;
     }
-    if (Number(subscript) === 0) {
+    if (Number(subscript) === -1) {
       span.textContent = `💲0.${value}`;
       return span;
     }
-    if (Number(subscript) === 1) {
+    if (Number(subscript) === 0) {
       span.textContent = `💲0.0${value}`;
       return span;
     }
