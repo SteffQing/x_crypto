@@ -16,6 +16,9 @@ export function stripSocials(url) {
   return url.replace(/(https?:\/\/)?(www\.)?(twitter)\.com\/(#!\/)?/i, '');
 }
 export function stripPrice(price) {
+  if (Number(price) > 0) {
+    return { subscript: null, value: formatVolume(price) };
+  }
   // Split on decimal
   const [, decimal] = price.split('.');
 
@@ -49,6 +52,6 @@ export function formatVolume(volume) {
     return (num / 1e3).toFixed() + 'K';
   } else {
     // Value is less than 1,000
-    return volume;
+    return num.toFixed(2);
   }
 }

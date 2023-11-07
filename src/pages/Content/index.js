@@ -282,9 +282,14 @@ function createImage(url, symbol) {
 
 function createSpan(text, type = false, elem = null) {
   const span = document.createElement('span');
+  span.style.whiteSpace = 'nowrap';
   if (type === 'PRICE') {
-    const subscriptNode = document.createElement('sub');
     const { subscript, value } = stripPrice(text);
+    if (!subscript) {
+      span.textContent = `💲${value}`;
+      return span;
+    }
+    const subscriptNode = document.createElement('sub');
     subscriptNode.textContent = subscript;
     subscriptNode.style.fontSize = '8px';
 
@@ -311,7 +316,6 @@ function createSpan(text, type = false, elem = null) {
       });
     }
   }
-  span.style.whiteSpace = 'nowrap';
   return span;
 }
 
