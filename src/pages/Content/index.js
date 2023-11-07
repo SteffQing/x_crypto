@@ -179,9 +179,17 @@ function attachInfoTag() {
           checkLastTag.remove();
         }
         const newDiv = createInfo(matchedTag);
-        // selectedTweetTag.appendChild(newDiv);
         const firstChild = selectedTweetTag.firstChild;
         selectedTweetTag.insertBefore(newDiv, firstChild);
+        cashtag_span.addEventListener('mouseover', () => {
+          console.log('Event listener fired');
+          const recentTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
+          if (recentTag) {
+            recentTag.remove();
+          }
+          const _firstChild = selectedTweetTag.firstChild;
+          selectedTweetTag.insertBefore(newDiv, _firstChild);
+        });
       }
     }
   }

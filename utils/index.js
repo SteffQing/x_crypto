@@ -13,7 +13,11 @@ export function displayAddressOrENS(address) {
 export const cashtag_regex = /cashtag_click/;
 
 export function stripSocials(url) {
-  return url.replace(/(https?:\/\/)?(www\.)?(twitter)\.com\/(#!\/)?/i, '');
+  let username = url.replace(
+    /(https?:\/\/)?(www\.)?(twitter)\.com\/(#!\/)?/i,
+    ''
+  );
+  return `${username.slice(0, 5)}...`;
 }
 export function stripPrice(price) {
   if (Math.floor(Number(price)) > 0) {
