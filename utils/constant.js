@@ -4,6 +4,8 @@ export const SERVER_URL = `http://localhost:4000`;
 
 export const MS_GET_TOKEN_INFO = 'GET_TOKEN_INFO';
 
+export const MS_GET_ACCOUNT_INFO = 'GET_ACCOUNT_INFO';
+
 export const TWITTER_ACCOUNT_NAME = 'x_defi';
 
 export const CLASS_FOR_TAG = 'x_defi-view-created';

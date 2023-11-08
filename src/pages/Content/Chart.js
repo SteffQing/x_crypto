@@ -1,4 +1,4 @@
-import { CrosshairMode } from 'lightweight-charts';
+import { CrosshairMode, createChart } from 'lightweight-charts';
 
 const chartOptions = {
   width: 600,
@@ -37,4 +37,20 @@ const candleSeriesSettings = {
   wickUpColor: 'rgba(0, 255, 0, 1)',
 };
 
-export { chartOptions, candleSeriesSettings };
+function createChartNode(chartData) {
+  const chartElement = document.createElement('div');
+
+  const chart = createChart(chartElement, chartOptions);
+  const candleSeries = chart.addCandlestickSeries(candleSeriesSettings);
+  candleSeries.setData(chartData);
+
+  chartElement.style.position = 'absolute';
+  chartElement.style.left = '0';
+  chartElement.style.zIndex = '999';
+  chartElement.style.display = 'none';
+  chartElement.style.width = '400px';
+  chartElement.style.top = '0px';
+
+  return chartElement;
+}
+export { createChartNode };

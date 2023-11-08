@@ -92,4 +92,17 @@ const Popup = () => {
   );
 };
 
+export function AccountInfo(){
+  
+  const { address, isConnected } = useAccount();
+  const isMounted = useIsMounted();
+  const { data: ensName } = useEnsName({ address });
+  const account = isMounted && address ? address.toLowerCase() : null;
+
+  return {
+    account,
+    isConnected,
+    ensName}
+}
+
 export default Popup;
