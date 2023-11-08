@@ -4,6 +4,7 @@ import { MS_GET_ACCOUNT_INFO } from '../../../utils/constant';
 
 // Portfolio link button
 export const addPortfolio = (address) => {
+  removePortfolio();
   const tab = document.querySelector("[aria-label='Primary']");
   const firstChild = tab.firstChild;
   const portfolio = firstChild.cloneNode(true);

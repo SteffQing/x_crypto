@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './Popup.css';
-import { useAccount, useConnect, useEnsName } from 'wagmi';
+import { useAccount, useConnect, useDisconnect, useEnsName } from 'wagmi';
 import {
   STORAGE_KEY,
   ACCOUNT_KEY,
@@ -18,6 +18,7 @@ const Popup = () => {
   const isMounted = useIsMounted();
   const { data: ensName } = useEnsName({ address });
   const { connect, isLoading, connectors, isError, isSuccess } = useConnect();
+  const { disconnect, status } = useDisconnect();
   const account = isMounted && address ? address.toLowerCase() : null;
   const [height, setHeight] = useState('');
   const [isViewStat, setViewStat] = useState(false);
@@ -42,6 +43,8 @@ const Popup = () => {
 
   useEffect(() => {
     console.count('useEffect');
+    console.log('isSuccess', isSuccess);
+    console.log('isError', isError);
     if (isSuccess || isError) {
       setHeight('');
     }
@@ -59,20 +62,16 @@ const Popup = () => {
 
       <section className="section">
         {!isConnected ? (
-          // <button
-          //   className="button"
-          //   onClick={handleConnect}
-          //   disabled={isLoading || isConnected || !connectors[0].ready}
-          // >
-          //   {isLoading ? 'Connecting...' : 'Connect'}
-          // </button>
           connectors.map((connector) => (
             <button
-              disabled={!connector.ready}
+              disabled={!connector.ready || isLoading}
               key={connector.id}
+              className="button"
               onClick={() => {
-                console.log(connector);
-                setHeight('440px');
+                console.log('connector', connector);
+                if (connector.id === 'walletConnect') {
+                  setHeight('440px');
+                }
                 connect({ connector });
               }}
             >
@@ -91,6 +90,13 @@ const Popup = () => {
               className="fs-md c-white"
               rel="noreferrer"
             >{`Portfolio`}</a>
+            <button
+              className="button"
+              onClick={() => disconnect()}
+              disabled={status === 'loading'}
+            >
+              {isLoading ? 'Disconnecting...' : 'Disconnect'}
+            </button>
           </>
         )}
         {isViewStat !== null && (

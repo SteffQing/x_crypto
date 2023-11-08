@@ -243,6 +243,7 @@ function createInfo(tokenInfo) {
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {
+  console.log('GET: ', values);
   if (values.hasOwnProperty(STORAGE_KEY) && values[STORAGE_KEY]) {
     setTimeout(startProcess, 300);
   }
@@ -267,11 +268,11 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     if (key === ACCOUNT_KEY) {
       const newValue = changes[key].newValue;
       console.log('Account changed: ', newValue);
-      if (newValue.isConnected) {
+      if (newValue.isConnected && newValue.account) {
         console.log('portfolio in');
         addPortfolio(newValue.account);
       } else {
-        console.log('stop interval');
+        console.log('remove portfolio');
         removePortfolio();
       }
     }

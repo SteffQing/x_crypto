@@ -3,7 +3,7 @@ import { mainnet } from 'wagmi/chains';
 import { publicProvider } from 'wagmi/providers/public';
 import { infuraProvider } from 'wagmi/providers/infura';
 import { WalletConnectConnector } from 'wagmi/connectors/walletConnect';
-import { InjectedConnector } from 'wagmi/connectors/injected';
+import { MetaMaskConnector } from 'wagmi/connectors/metaMask';
 import { INFURA_KEY, WC_PROJECT_ID } from './constant';
 
 const { chains, publicClient, webSocketPublicClient } = configureChains(
@@ -21,12 +21,7 @@ const connectors = [
       },
     },
   }),
-  new InjectedConnector({
-    chains,
-    options: {
-      name: 'Metamask',
-    },
-  }),
+  new MetaMaskConnector({ chains }),
 ];
 
 export const config = createConfig({
