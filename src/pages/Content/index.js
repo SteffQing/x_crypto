@@ -1,6 +1,7 @@
 import { num } from '../../../server/fragments';
 import { cashtag_regex, formatVolume, stripSocials } from '../../../utils';
 import {
+  ACCOUNT_KEY,
   CLASS_FOR_TAG,
   MS_GET_TOKEN_INFO,
   STORAGE_KEY,
@@ -13,7 +14,7 @@ import {
   createLink,
   createSpan,
 } from './CreateElements';
-import { addPortfolio } from './Portfolio';
+import { addPortfolio, removePortfolio } from './Portfolio';
 
 const dataMap = new Map();
 
@@ -43,16 +44,6 @@ const startProcess = () => {
     subtree: true,
     childList: true,
   });
-
-  try {
-    addPortfolio();
-  } catch (error) {
-    console.log('Error: ', error.message);
-    setTimeout(() => {
-      console.log('Retrying after 5 seconds...');
-      addPortfolio();
-    }, 5000);
-  }
 };
 
 const stopProcess = () => {
@@ -255,6 +246,9 @@ chrome.storage.local.get(STORAGE_KEY).then((values) => {
   if (values.hasOwnProperty(STORAGE_KEY) && values[STORAGE_KEY]) {
     setTimeout(startProcess, 300);
   }
+  if (values.hasOwnProperty(ACCOUNT_KEY) && values[ACCOUNT_KEY]) {
+    console.log('Account found', values[ACCOUNT_KEY]);
+  }
 });
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
@@ -268,6 +262,17 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
       } else {
         console.log('stop interval');
         stopProcess();
+      }
+    }
+    if (key === ACCOUNT_KEY) {
+      const newValue = changes[key].newValue;
+      console.log('Account changed: ', newValue);
+      if (newValue.isConnected) {
+        console.log('portfolio in');
+        addPortfolio(newValue.account);
+      } else {
+        console.log('stop interval');
+        removePortfolio();
       }
     }
   }
