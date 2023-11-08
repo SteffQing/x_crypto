@@ -6,13 +6,7 @@ export const getTokenInfo = (symbols) =>
     url: `${SERVER_URL}?symbols=${encodeURIComponent(symbols.join(','))}`,
   });
 
-// async function get(url) {
-//   const db = window.
-//   let cached = await idbKeyval.get(url);
-//   if (!cached) {
-//     cached = await fetch(url);
-//     idbKeyval.set(url, cached);
-//   }
-//   return cached;
-
-// }
+export const getAccountInfo = (address) =>
+  getRequest({
+    url: `${SERVER_URL}/account?address=${address}`,
+  });

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { searchToken, fetchTokenSocials, getChart } = require('./fragments');
+const { getAccountBalance } = require('./account');
 
 const app = express();
 
@@ -50,6 +51,18 @@ app.get('/chart', async (req, res) => {
   const data = await getChart(address, networkId);
 
   res.json(data);
+});
+
+app.get('/account', async (req, res) => {
+  const { address } = req.query;
+
+  try {
+    const data = await getAccountBalance(address);
+    res.json(data);
+  } catch (error) {
+    console.log('Error: ', error.message);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Start the server

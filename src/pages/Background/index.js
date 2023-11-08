@@ -1,5 +1,8 @@
-import { MS_GET_TOKEN_INFO } from '../../../utils/constant';
-import { getTokenInfo } from '../../apis/serverAPI';
+import {
+  MS_GET_ACCOUNT_INFO,
+  MS_GET_TOKEN_INFO,
+} from '../../../utils/constant';
+import { getAccountInfo, getTokenInfo } from '../../apis/serverAPI';
 
 console.log('background');
 
@@ -13,6 +16,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       })
       .catch((error) => {
         console.error('background:', error);
+        sendResponse([]);
+      });
+
+    return true;
+  }
+
+  if (message.action === MS_GET_ACCOUNT_INFO) {
+    getAccountInfo(message.address)
+      .then((infos) => {
+        sendResponse(infos);
+      })
+      .catch((error) => {
+        console.error('background getAccountInfo:', error);
         sendResponse([]);
       });
 

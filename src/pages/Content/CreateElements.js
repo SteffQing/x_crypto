@@ -36,21 +36,27 @@ function createImage(url, symbol) {
   return image;
 }
 
-function createSpan(text, type = false) {
+function createSpan(text, bool = false, type = null) {
   const span = document.createElement('span');
   span.style.whiteSpace = 'nowrap';
-  if (type) {
+  if (bool) {
     const { subscript, value } = stripPrice(text);
     if (!subscript) {
-      span.textContent = `💲${value}`;
+      if (type === 'BALANCE') {
+        span.textContent = value;
+      } else span.textContent = `💲${value}`;
       return span;
     }
     if (Number(subscript) === -1) {
-      span.textContent = `💲0.${value}`;
+      if (type === 'BALANCE') {
+        span.textContent = value;
+      } else span.textContent = `💲0.${value}`;
       return span;
     }
     if (Number(subscript) === 0) {
-      span.textContent = `💲0.0${value}`;
+      if (type === 'BALANCE') {
+        span.textContent = value;
+      } else span.textContent = `💲0.0${value}`;
       return span;
     }
     const subscriptNode = document.createElement('sub');
@@ -58,7 +64,10 @@ function createSpan(text, type = false) {
     subscriptNode.style.fontSize = '8px';
 
     const container = document.createElement('span');
-    const zeroText = document.createTextNode('💲0.0');
+    let zeroText = null;
+    if (type === 'BALANCE') {
+      zeroText = document.createTextNode('0.0');
+    } else zeroText = document.createTextNode('💲0.0');
 
     // Append the parts to the container
     container.appendChild(zeroText);
@@ -72,7 +81,7 @@ function createSpan(text, type = false) {
   return span;
 }
 
-function createDiv(element1, element2) {
+function mergeToDiv(element1, element2, element3 = null) {
   const div = document.createElement('div');
   div.style.display = 'flex';
   div.style.alignItems = 'center';
@@ -80,8 +89,69 @@ function createDiv(element1, element2) {
 
   div.appendChild(element1);
   div.appendChild(element2);
+  if (element3) {
+    div.appendChild(element3);
+  }
 
   return div;
 }
 
-export { createLink, createImage, createSpan, createDiv };
+function createTable(assets) {
+  const headers = ['Asset', 'Balance', 'Price', 'USD Value', 'Chain'];
+  const table = document.createElement('table');
+  const thead = document.createElement('thead');
+  const tbody = document.createElement('tbody');
+  const tr1 = document.createElement('tr');
+  for (let i = 0; i < 5; i++) {
+    const td = document.createElement('th');
+    td.textContent = headers[i];
+    tr1.appendChild(td);
+  }
+  thead.appendChild(tr1);
+  table.appendChild(thead);
+  for (let i = 0; i < assets.length; i++) {
+    const tr = document.createElement('tr');
+    for (let j = 0; j < 5; j++) {
+      const cell = document.createElement('td');
+      const {
+        blockchain,
+        tokenSymbol,
+        balance,
+        balanceUSD,
+        tokenPrice,
+        thumbnail,
+      } = assets[i];
+      switch (j) {
+        case 0:
+          const imageNode = createImage(thumbnail, tokenSymbol);
+          const symbolNode = createSpan(tokenSymbol);
+          const imageSymbolNode = mergeToDiv(imageNode, symbolNode);
+          cell.appendChild(imageSymbolNode);
+          break;
+        case 1:
+          const balance_span = createSpan(balance, true);
+          cell.appendChild(balance_span);
+          break;
+        case 2:
+          const price_span = createSpan(tokenPrice, true);
+          cell.appendChild(price_span);
+          break;
+        case 3:
+          const balanceUSD_span = createSpan(balanceUSD, true);
+          cell.appendChild(balanceUSD_span);
+          break;
+        case 4:
+          cell.textContent = blockchain;
+          break;
+        default:
+          break;
+      }
+      tr.appendChild(cell);
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+  return table;
+}
+
+export { createLink, createImage, createSpan, mergeToDiv, createTable };

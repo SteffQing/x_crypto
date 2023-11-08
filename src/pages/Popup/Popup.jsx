@@ -39,12 +39,12 @@ const Popup = () => {
         chrome.storage.local.set({ [STORAGE_KEY]: true });
       }
     });
+    let data = { account, ensName, isConnected };
+    chrome.storage.local.set({ [ACCOUNT_KEY]: data });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    console.count('useEffect');
-    console.log('isSuccess', isSuccess);
-    console.log('isError', isError);
     if (isSuccess || isError) {
       setHeight('');
     }
@@ -61,7 +61,7 @@ const Popup = () => {
       </header>
 
       <section className="section">
-        {!isConnected ? (
+        {!isConnected && !account ? (
           connectors.map((connector) => (
             <button
               disabled={!connector.ready || isLoading}

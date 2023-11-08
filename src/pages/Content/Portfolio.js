@@ -1,9 +1,10 @@
 import { MS_GET_ACCOUNT_INFO } from '../../../utils/constant';
+import { createSpan, createTable, mergeToDiv } from './CreateElements';
 
-// let accountMap = new Map();
+let accountMap = new Map();
 
 // Portfolio link button
-export const addPortfolio = (address) => {
+export const addPortfolio = async (address) => {
   removePortfolio();
   const tab = document.querySelector("[aria-label='Primary']");
   const firstChild = tab.firstChild;
@@ -30,6 +31,13 @@ export const addPortfolio = (address) => {
   portfolio.setAttribute('href', `/portfolio/?address=${address}`);
 
   tab.insertBefore(portfolio, firstChild.nextSibling);
+
+  try {
+    await getAccountInfo(address);
+    attachPortfolio(address);
+  } catch (error) {
+    console.log('Error: ', error.message);
+  }
 };
 export const removePortfolio = () => {
   const tab = document.querySelector("[aria-label='Primary']");
@@ -54,11 +62,12 @@ function createPortfolioSVG(parent) {
   );
 }
 
-// Portfolio data fetching
+// Portfolio data fetching and setting
 const setAccountInfo = (data) => {
-  if (!data) {
+  if (data.length === 0) {
     return;
   }
+  accountMap.set(data.address, data);
 };
 const getAccountInfo = async (address) => {
   return new Promise((resolve, reject) => {
@@ -79,3 +88,45 @@ const getAccountInfo = async (address) => {
 
 // Portfolio Injection
 // function attachPortfolio() {}
+function attachPortfolio(address) {
+  const main = document.querySelector("[data-testid='primaryColumn']");
+  const sideBar = document.querySelector("[data-testid='sidebarColumn']");
+  const accountInfo = accountMap.get(address);
+  if (!accountInfo) return;
+  const parent = main.parentNode;
+  const newDiv = createInfo(accountInfo);
+  main.remove();
+  if (sideBar) {
+    parent.insertBefore(newDiv, sideBar);
+  } else parent.appendChild(newDiv);
+}
+
+function createInfo(accountInfo) {
+  const newDiv = document.createElement('div');
+  newDiv.setAttribute('data-testid', 'primaryColumn');
+  newDiv.classList.add('primaryColumn');
+
+  let { address, assets, totalBalanceUsd, totalCount } = accountInfo;
+
+  // Portfolio header
+  const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
+  const addressNode = createSpan(addressShort);
+  const totalBalanceUsdNode = createSpan(totalBalanceUsd, true);
+  const totalCountNode = createSpan(totalCount);
+
+  const headerNode = mergeToDiv(
+    addressNode,
+    totalBalanceUsdNode,
+    totalCountNode
+  );
+  headerNode.classList.add('header');
+
+  // Portfolio table
+  const table = createTable(assets);
+  table.classList.add('table');
+
+  newDiv.appendChild(headerNode);
+  newDiv.appendChild(table);
+
+  return newDiv;
+}

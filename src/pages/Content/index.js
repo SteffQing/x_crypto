@@ -9,10 +9,10 @@ import {
 import { createChartNode } from './Chart';
 import { Networks } from './Networks';
 import {
-  createDiv,
   createImage,
   createLink,
   createSpan,
+  mergeToDiv,
 } from './CreateElements';
 import { addPortfolio, removePortfolio } from './Portfolio';
 
@@ -191,7 +191,7 @@ function createInfo(tokenInfo) {
   // Image and Symbol
   const imageNode = createImage(imageThumbUrl, symbol);
   const symbolNode = createSpan(symbol);
-  const imageSymbolNode = createDiv(imageNode, symbolNode);
+  const imageSymbolNode = mergeToDiv(imageNode, symbolNode);
 
   // Price, 24H Change and Volume
   const priceNode = createSpan(`${price}`, true);
@@ -243,12 +243,16 @@ function createInfo(tokenInfo) {
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {
-  console.log('GET: ', values);
   if (values.hasOwnProperty(STORAGE_KEY) && values[STORAGE_KEY]) {
     setTimeout(startProcess, 300);
   }
+});
+chrome.storage.local.get(ACCOUNT_KEY).then((values) => {
   if (values.hasOwnProperty(ACCOUNT_KEY) && values[ACCOUNT_KEY]) {
-    console.log('Account found', values[ACCOUNT_KEY]);
+    const account = values[ACCOUNT_KEY];
+    if (account.isConnected && account.account) {
+      addPortfolio(account.account);
+    }
   }
 });
 
@@ -267,7 +271,6 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
     if (key === ACCOUNT_KEY) {
       const newValue = changes[key].newValue;
-      console.log('Account changed: ', newValue);
       if (newValue.isConnected && newValue.account) {
         console.log('portfolio in');
         addPortfolio(newValue.account);
