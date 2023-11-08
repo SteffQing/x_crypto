@@ -28,7 +28,7 @@ export const addPortfolio = async (address) => {
       }
     }
   });
-  portfolio.setAttribute('href', `/portfolio/?address=${address}`);
+  portfolio.setAttribute('href', `/portfolio?address=${address}`);
 
   tab.insertBefore(portfolio, firstChild.nextSibling);
 
@@ -41,6 +41,7 @@ export const addPortfolio = async (address) => {
 };
 export const removePortfolio = () => {
   const tab = document.querySelector("[aria-label='Primary']");
+  if (!tab) return;
   const portfolio = tab.querySelector("[aria-label='Portfolio']");
   if (portfolio) {
     portfolio.remove();
@@ -86,8 +87,7 @@ const getAccountInfo = async (address) => {
   });
 };
 
-// Portfolio Injection
-// function attachPortfolio() {}
+// Portfolio HTML to inject
 function attachPortfolio(address) {
   const main = document.querySelector("[data-testid='primaryColumn']");
   const sideBar = document.querySelector("[data-testid='sidebarColumn']");
@@ -130,3 +130,15 @@ function createInfo(accountInfo) {
 
   return newDiv;
 }
+
+// Portfolio Injection
+chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+  console.log('onHistoryStateUpdated: ', details);
+  // Check if the URL matches your desired pattern
+  if (details.url.includes('https://twitter.com/portfolio?address=')) {
+    // This URL matches your pattern, so you can execute your injection script here
+    // For example, you can inject your script using a method like this:
+    // injectScript();
+    console.log('Inject your script here');
+  }
+});
