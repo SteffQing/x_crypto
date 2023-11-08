@@ -52,7 +52,7 @@ query MyQuery($id:String!, $from:Int!, $to:Int! ) {
     symbol: $id
     from: $from
     to: $to
-    resolution: "60"
+    resolution: "1D"
     quoteToken: token1
   ) {
     o
@@ -96,7 +96,7 @@ async function getChart(address, networkId) {
   const { errors, data } = await fetchGraphQL(
     fetchTokenChartOperation,
     'MyQuery',
-    { id: id, from: to - 86400, to: to }
+    { id: id, from: to - 2419200, to: to }
   );
   if (errors) {
     console.error(errors);

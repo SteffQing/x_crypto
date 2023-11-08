@@ -9,18 +9,23 @@ app.use(cors());
 
 // Define your routes here
 app.get('/', async (req, res) => {
-  const { symbols } = req.query;
-  let _symbols = symbols.split(',');
-  const results = [];
-  for (let symbol of _symbols) {
-    const searchResult = await searchToken(symbol);
-    const { address, networkId } = searchResult;
-    const socialsResults = await fetchTokenSocials(address, networkId);
-    const bar = await getChart(address, networkId);
-    const { twitter } = socialsResults.socialLinks;
-    results.push({ ...searchResult, twitter, bar });
+  try {
+    const { symbols } = req.query;
+    let _symbols = symbols.split(',');
+    const results = [];
+    for (let symbol of _symbols) {
+      const searchResult = await searchToken(symbol);
+      const { address, networkId } = searchResult;
+      const socialsResults = await fetchTokenSocials(address, networkId);
+      const bar = await getChart(address, networkId);
+      const { twitter } = socialsResults.socialLinks;
+      results.push({ ...searchResult, twitter, bar });
+    }
+    res.json(results);
+  } catch (error) {
+    console.log('Error: ', error);
+    res.status(500).json({ error: error.message });
   }
-  res.json(results);
 });
 
 app.get('/search', async (req, res) => {

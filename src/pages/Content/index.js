@@ -59,26 +59,12 @@ const startProcess = () => {
 
 const addPortfolio = () => {
   const tab = document.querySelector("[aria-label='Primary']");
-  const portfolio = createLink('/portfolio');
   const firstChild = tab.firstChild;
-  portfolio.classList = firstChild.classList;
-  const portfolioDiv1 = document.createElement('div');
-  portfolioDiv1.classList = firstChild.firstChild.classList;
-  const portfolioDiv2 = document.createElement('div');
-  portfolioDiv2.classList = firstChild.firstChild.firstChild.classList;
-  const portfolioSvg = createPortfolioSVG(
-    firstChild.firstChild.firstChild.firstChild.classList
-  );
-
-  //
+  const portfolio = firstChild.cloneNode(true);
+  createPortfolioSVG(portfolio);
   portfolio.ariaLabel = 'View your Portfolio';
   portfolio.role = 'Portfolio';
   portfolio.dataset.testid = 'Portfolio Tab';
-
-  // Append the parts to the container
-  portfolioDiv2.appendChild(portfolioSvg);
-  portfolioDiv1.appendChild(portfolioDiv2);
-  portfolio.appendChild(portfolioDiv1);
 
   tab.insertBefore(portfolio, firstChild.nextSibling);
 };
@@ -182,7 +168,6 @@ function attachInfoTag() {
         const firstChild = selectedTweetTag.firstChild;
         selectedTweetTag.insertBefore(newDiv, firstChild);
         cashtag_span.addEventListener('mouseover', () => {
-          console.log('Event listener fired');
           const recentTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
           if (recentTag) {
             recentTag.remove();
@@ -232,14 +217,25 @@ function createInfo(tokenInfo) {
   const imageSymbolNode = createDiv(imageNode, symbolNode);
 
   // Price, 24H Change and Volume
-  const priceNode = createSpan(`${price}`, 'PRICE');
+  const priceNode = createSpan(`${price}`, true);
   const priceChangeNode = createSpan(`📈 ${num(priceChange).toFixed(2)}%`);
   const volumeNode = createSpan(`💹 $${formatVolume(volume)}`);
 
   // Chart and Buy/Sell
-  const chartNode = createChartNode(bar);
-  const viewChartNode = createSpan('📊 Chart', 'CHART', chartNode);
-  const viewBuySellModal = createSpan('💱 Trade', 'Trade');
+  const chartNode = createChartNode(bar, newDiv);
+  const viewChartNode = createSpan('📊 Chart');
+  viewChartNode.addEventListener('mouseover', () => {
+    chartNode.style.display = 'block';
+    chartNode.style.top = newDiv.offsetHeight + 'px';
+    chartNode.style.width = newDiv.offsetWidth + 'px';
+    console.log(newDiv.offsetHeight, newDiv.offsetWidth, 'Hover');
+  });
+  viewChartNode.addEventListener('mouseout', () => {
+    setTimeout(() => {
+      chartNode.style.display = 'none';
+    }, 5000);
+  });
+  const viewBuySellModal = createSpan('💱 Trade');
 
   // Address and Link
   const network = Networks.find((network) => network.id === networkId).name;
@@ -304,10 +300,10 @@ function createImage(url, symbol) {
   return image;
 }
 
-function createSpan(text, type = false, elem = null) {
+function createSpan(text, type = false) {
   const span = document.createElement('span');
   span.style.whiteSpace = 'nowrap';
-  if (type === 'PRICE') {
+  if (type) {
     const { subscript, value } = stripPrice(text);
     if (!subscript) {
       span.textContent = `💲${value}`;
@@ -335,19 +331,8 @@ function createSpan(text, type = false, elem = null) {
 
     // Append the container to the parent span element
     span.appendChild(container);
-  } else {
-    span.textContent = text;
-    if (type === 'CHART') {
-      span.addEventListener('mouseover', () => {
-        elem.style.display = 'block';
-      });
-      span.addEventListener('mouseout', () => {
-        setTimeout(() => {
-          elem.style.display = 'none';
-        }, 5000);
-      });
-    }
-  }
+  } else span.textContent = text;
+
   return span;
 }
 
@@ -371,43 +356,27 @@ function createChartNode(chartData) {
   candleSeries.setData(chartData);
 
   chartElement.style.position = 'absolute';
-  chartElement.style.top = '0';
-  chartElement.style.right = '0';
-  chartElement.style.width = '100%';
+  chartElement.style.left = '0';
   chartElement.style.zIndex = '999';
   chartElement.style.display = 'none';
+  chartElement.style.width = '400px';
+  chartElement.style.top = '0px';
 
   return chartElement;
 }
 
-function createPortfolioSVG(classList) {
-  const svgElement = document.createElementNS(
-    'http://www.w3.org/2000/svg',
-    'svg'
-  );
-  svgElement.ariaHidden = 'true';
-  svgElement.setAttribute('viewBox', '0 0 512 512');
-  svgElement.setAttribute('fill', '#000000');
-  svgElement.setAttribute('height', '24px');
-  svgElement.setAttribute('width', '24px');
-  svgElement.classList = classList;
+function createPortfolioSVG(parent) {
+  parent.setAttribute('href', '/portfolio');
+  parent.setAttribute('aria-label', 'Portfolio');
+  parent.setAttribute('data-testid', 'Portfolio Tab');
 
-  // Title element
-  const gElement = document.createElement('g');
-  const gElement2 = document.createElement('g');
-
-  // Path element
-  const pathElement = document.createElement('path');
+  const pathElement = parent.querySelector('path');
+  const spanElement = parent.querySelector('span');
+  spanElement.textContent = 'Portfolio';
   pathElement.setAttribute(
     'd',
-    'M469.779,94.063H352.573l-9.106-36.426c-4.709-18.832-21.554-31.983-40.962-31.983h-93.011 c-19.408,0-36.253,13.152-40.963,31.984l-9.105,36.425H42.221C18.941,94.063,0,113.003,0,136.284v307.841 c0,23.281,18.941,42.221,42.221,42.221h427.557c23.281,0,42.221-18.941,42.221-42.221V136.284	C512,113.003,493.059,94.063,469.779,94.063z M184.086,61.528c2.922-11.682,13.371-19.841,25.409-19.841h93.011 c12.038,0,22.486,8.159,25.409,19.84l8.133,32.536h-18.732l-7.033-28.132c-0.891-3.569-4.098-6.072-7.777-6.072h-93.011	c-3.678,0-6.885,2.503-7.777,6.072l-7.031,28.132h-18.732L184.086,61.528z M300.789,94.063h-89.578l4.543-18.171h80.492	L300.789,94.063z M42.221,110.096h427.557c8.005,0,15.177,3.614,19.985,9.291l-52.05,156.149	c-4.736,14.208-17.98,23.754-32.957,23.754H289.67v-17.637c0-9.136-7.432-16.568-16.568-16.568h-34.205	c-9.136,0-16.568,7.432-16.568,16.568v17.637H107.243c-14.976,0-28.221-9.546-32.957-23.753l-52.05-156.15 C27.044,113.71,34.216,110.096,42.221,110.096z M238.363,316.393v-34.739c0-0.295,0.239-0.534,0.534-0.534h34.205 c0.295,0,0.534,0.239,0.534,0.534v34.739H238.363z M273.637,332.426v17.637c0,0.295-0.239,0.534-0.534,0.534h-34.205	c-0.295,0-0.534-0.239-0.534-0.534v-17.637H273.637z M495.967,444.125c0,14.44-11.748,26.188-26.188,26.188H42.221 c-14.44,0-26.188-11.748-26.188-26.188V151.481l43.042,129.126c6.922,20.765,26.279,34.717,48.168,34.717H222.33v34.739 c0,9.136,7.432,16.568,16.568,16.568h34.205c9.136,0,16.568-7.432,16.568-16.568v-34.739h115.087 c21.889,0,41.245-13.951,48.168-34.717l43.042-129.126V444.125z'
+    'M19.732 7.203v-2.666h-7.464v2.666h-9.063v20.259h25.59v-20.259h-9.063zM13.334 5.604h5.331v1.599h-5.331v-1.599zM12.268 8.27h15.461v8.53h-7.997v-2.133h-7.464v2.133h-7.997v-8.53h7.997zM18.666 15.733v3.199h-5.331v-3.199h5.331zM4.271 26.396v-8.53h7.997v2.133h7.464v-2.133h7.997v8.53h-23.457z'
   );
-
-  // Append the title and path elements to the SVG
-  gElement.appendChild(pathElement);
-  gElement2.appendChild(gElement);
-  svgElement.appendChild(gElement2);
-  return svgElement;
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {

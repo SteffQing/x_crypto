@@ -29,12 +29,12 @@ const chartOptions = {
   },
 };
 const candleSeriesSettings = {
-  upColor: 'rgba(255, 144, 0, 1)',
-  downColor: '#000',
-  borderDownColor: 'rgba(255, 144, 0, 1)',
-  borderUpColor: 'rgba(255, 144, 0, 1)',
-  wickDownColor: 'rgba(255, 144, 0, 1)',
-  wickUpColor: 'rgba(255, 144, 0, 1)',
+  upColor: 'rgba(0, 255, 0, 1)',
+  downColor: 'rgba(255, 0, 0, 1)',
+  borderDownColor: 'rgba(255, 0, 0, 1)',
+  borderUpColor: 'rgba(0, 255, 0, 1)',
+  wickDownColor: 'rgba(255, 0, 0, 1)',
+  wickUpColor: 'rgba(0, 255, 0, 1)',
 };
 
 export { chartOptions, candleSeriesSettings };
