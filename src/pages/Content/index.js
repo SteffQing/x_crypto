@@ -48,8 +48,6 @@ const startProcess = () => {
     addPortfolio();
   } catch (error) {
     console.log('Error: ', error.message);
-
-    // If an error occurred, wait for 5 seconds and then try again
     setTimeout(() => {
       console.log('Retrying after 5 seconds...');
       addPortfolio();
@@ -85,7 +83,7 @@ const fetchAndAttach = async (node) => {
     if (newCashTags.length > 0) {
       await getTokensInfo(newCashTags);
     }
-    attachInfoTag();
+    attachInfoTag(node);
   } catch (error) {
     console.error(error);
   }
@@ -149,9 +147,9 @@ const getTokensInfo = async (cashtags) => {
   });
 };
 
-function attachInfoTag() {
-  const selectedTweetTag = document.querySelector("[data-testid='tweetText']");
-  if (selectedTweetTag) {
+function attachInfoTag(node) {
+  const selectedTweets = node.querySelectorAll("[data-testid='tweetText']");
+  for (let selectedTweetTag of selectedTweets) {
     const children = selectedTweetTag.children;
     const cashtag_spans = Array.from(children).filter(
       (child) => Array.from(child.classList).length === 1
@@ -228,7 +226,6 @@ function createInfo(tokenInfo) {
     chartNode.style.display = 'block';
     chartNode.style.top = newDiv.offsetHeight + 'px';
     chartNode.style.width = newDiv.offsetWidth + 'px';
-    console.log(newDiv.offsetHeight, newDiv.offsetWidth, 'Hover');
   });
   viewChartNode.addEventListener('mouseout', () => {
     setTimeout(() => {
