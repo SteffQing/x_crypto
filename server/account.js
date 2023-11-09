@@ -13,18 +13,6 @@ const listOfChains = [
   'polygon_zkevm',
 ];
 
-//
-
-//key-value pair mapping of chains to their native symbols
-// const chainsToNativeSymbols = {
-//   eth: 'ETH',
-//   arbitrum: 'ETH',
-//   avalanche: 'AVAX',
-//   bsc: 'BNB',
-//   fantom: 'FTM',
-//   polygon: 'MATIC',
-// };
-
 //getAccountBalance function to fetch coins and their respective token balances
 async function fetchAnkrData(method, params) {
   const result = await fetch(
