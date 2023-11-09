@@ -46,8 +46,10 @@ const Popup = () => {
     if (isSuccess || isError) {
       setHeight('');
     }
-    let data = { account, ensName, isConnected };
-    chrome.storage.local.set({ [ACCOUNT_KEY]: data });
+    if (account && isConnected) {
+      let data = { account, ensName, isConnected };
+      chrome.storage.local.set({ [ACCOUNT_KEY]: data });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSuccess, isError]);
 

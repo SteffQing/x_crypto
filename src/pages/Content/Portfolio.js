@@ -59,7 +59,7 @@ function createPortfolioSVG(parent) {
 // Portfolio data fetching and setting
 const setAccountInfo = (data) => {
   console.log('setAccountInfo', data);
-  if (data.length === 0) {
+  if (!data) {
     return;
   }
   accountMap.set(data.address, data);
@@ -88,15 +88,21 @@ function attachPortfolio(address) {
   const main = document.querySelector("[data-testid='primaryColumn']");
   const sideBar = document.querySelector("[data-testid='sidebarColumn']");
   const accountInfo = accountMap.get(address);
-  if (!accountInfo) return;
   const parent = main.parentNode;
-  const newDiv = createInfo(accountInfo);
-  main.remove();
-  if (sideBar) {
-    parent.insertBefore(newDiv, sideBar);
-  } else parent.appendChild(newDiv);
+  if (!accountInfo) {
+    const newDiv = createNullAccount(address);
+    main.remove();
+    if (sideBar) {
+      parent.insertBefore(newDiv, sideBar);
+    } else parent.appendChild(newDiv);
+  } else {
+    const newDiv = createInfo(accountInfo);
+    main.remove();
+    if (sideBar) {
+      parent.insertBefore(newDiv, sideBar);
+    } else parent.appendChild(newDiv);
+  }
 }
-
 function createInfo(accountInfo) {
   const newDiv = document.createElement('div');
   newDiv.setAttribute('data-testid', 'primaryColumn');
@@ -127,8 +133,36 @@ function createInfo(accountInfo) {
   return newDiv;
 }
 
+function createNullAccount(address) {
+  const newDiv = document.createElement('div');
+  newDiv.setAttribute('data-testid', 'primaryColumn');
+  newDiv.classList.add('primaryColumn');
+
+  // Portfolio header
+  const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
+  const addressNode = createSpan(addressShort);
+  const totalBalanceUsdNode = createSpan('0.00', true);
+  const totalCountNode = createSpan('0');
+
+  const headerNode = mergeToDiv(
+    addressNode,
+    totalBalanceUsdNode,
+    totalCountNode
+  );
+  headerNode.classList.add('header');
+
+  // Portfolio body
+  const errorNode = createSpan('No data available, please refresh the page.');
+  const bodyNode = document.createElement('div');
+  bodyNode.classList.add('body');
+  bodyNode.appendChild(errorNode);
+
+  newDiv.appendChild(headerNode);
+  newDiv.appendChild(bodyNode);
+  return newDiv;
+}
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  console.log('content msg', message, sender, sendResponse);
   if (message.action === 'addPortfolio') {
     getAccountInfo(message.address)
       .then(attachPortfolio(message.address))

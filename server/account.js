@@ -26,8 +26,8 @@ const listOfChains = [
 // };
 
 //getAccountBalance function to fetch coins and their respective token balances
-const getAccountBalance = async (walletAddress) => {
-  const data = await fetch(
+async function fetchAnkrData(method, params) {
+  const result = await fetch(
     'https://rpc.ankr.com/multichain/f3be1d95bdfba66bd8c30dedab865287e2eaa6a8a63a899c9b3db98c94036373',
     {
       method: 'POST',
@@ -37,17 +37,25 @@ const getAccountBalance = async (walletAddress) => {
       body: JSON.stringify({
         id: 1,
         jsonrpc: '2.0',
-        method: 'ankr_getAccountBalance',
-        params: {
-          blockchain: listOfChains,
-          walletAddress,
-          nativeFirst: true,
-        },
+        method: method,
+        params: params,
       }),
     }
-  )
-    .then((res) => res.json())
-    .catch((err) => console.log(err));
+  );
+  return await result.json();
+}
+
+const getAccountBalance = async (walletAddress) => {
+  let params = {
+    blockchain: listOfChains,
+    walletAddress,
+    nativeFirst: true,
+  };
+  const { error, data } = await fetchAnkrData('ankr_getAccountBalance', params);
+  if (error) {
+    console.log('error: ', error.message);
+    return null;
+  }
   const { assets, totalBalanceUsd, totalCount } = data.result;
   let _assets = assets.map((asset) => {
     const {
