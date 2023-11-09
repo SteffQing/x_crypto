@@ -286,7 +286,7 @@ window.onload = function () {
   chrome.runtime.sendMessage(
     { action: 'content_script_ready' },
     function (response) {
-      console.log(response, 'window.onload');
+      console.log('window.onload');
     }
   );
 };

@@ -58,12 +58,14 @@ function createPortfolioSVG(parent) {
 
 // Portfolio data fetching and setting
 const setAccountInfo = (data) => {
+  console.log('setAccountInfo', data);
   if (data.length === 0) {
     return;
   }
   accountMap.set(data.address, data);
 };
 const getAccountInfo = async (address) => {
+  console.log('getAccountInfo', address);
   return new Promise((resolve, reject) => {
     const msg = {
       action: MS_GET_ACCOUNT_INFO,
@@ -82,6 +84,7 @@ const getAccountInfo = async (address) => {
 
 // Portfolio HTML to inject
 function attachPortfolio(address) {
+  console.log('attachPortfolio', address);
   const main = document.querySelector("[data-testid='primaryColumn']");
   const sideBar = document.querySelector("[data-testid='sidebarColumn']");
   const accountInfo = accountMap.get(address);
@@ -133,7 +136,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.log('Error: ', error.message);
       });
 
-    sendResponse('ok from content script');
+    sendResponse('receieved addPortfolio message');
 
     return true; // This will keep the message channel open until `sendResponse` is called.
   }

@@ -35,8 +35,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     return true;
   }
+
   if (message.action === 'content_script_ready') {
-    console.log('content_script_ready, view message queue', messageQueue);
     messageQueue.forEach((message) => {
       injectToContent(message);
     });
@@ -64,15 +64,11 @@ chrome.webNavigation.onDOMContentLoaded.addListener(
 );
 
 function injectToContent(msg) {
-  console.log('injectToContent');
-
   const targetUrlPattern = 'https://twitter.com/portfolio?address=';
 
   chrome.tabs.query({ active: true }, (tabs) => {
     for (const tab of tabs) {
-      console.log('tab', tab);
       if (tab.url && tab.url.includes(targetUrlPattern)) {
-        // Send a message to the first matching tab
         chrome.tabs.sendMessage(tab.id, msg, (response) => {
           if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError);
@@ -81,7 +77,7 @@ function injectToContent(msg) {
             console.log('Received response from content script: ', response);
           }
         });
-        break; // Exit the loop after sending the message to the first matching tab
+        break;
       }
     }
   });
