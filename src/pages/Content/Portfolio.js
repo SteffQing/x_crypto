@@ -84,29 +84,34 @@ const getAccountInfo = async (address) => {
 
 // Portfolio HTML to inject
 function attachPortfolio(address) {
-  console.log('attachPortfolio', address);
-  const main = document.querySelector("[data-testid='primaryColumn']");
-  const sideBar = document.querySelector("[data-testid='sidebarColumn']");
-  const accountInfo = accountMap.get(address);
-  const parent = main.parentNode;
-  if (!accountInfo) {
-    const newDiv = createNullAccount(address);
-    main.remove();
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('attachPortfolio', address);
+    const main = document.querySelector("[data-testid='primaryColumn']");
+    const sideBar = document.querySelector("[data-testid='sidebarColumn']");
+    const accountInfo = accountMap.get(address);
+    console.log('main node', main);
+    const parent = main.parentNode;
+    console.log('attachPortfolio parent', parent);
+    let newDiv = null;
+    if (!accountInfo) {
+      console.log('attachPortfolio null account');
+      newDiv = createNullAccount(address);
+      main.remove();
+    } else {
+      newDiv = createInfo(accountInfo);
+      console.log('attachPortfolio div', newDiv);
+      main.remove();
+    }
     if (sideBar) {
       parent.insertBefore(newDiv, sideBar);
     } else parent.appendChild(newDiv);
-  } else {
-    const newDiv = createInfo(accountInfo);
-    main.remove();
-    if (sideBar) {
-      parent.insertBefore(newDiv, sideBar);
-    } else parent.appendChild(newDiv);
-  }
+  });
 }
 function createInfo(accountInfo) {
   const newDiv = document.createElement('div');
   newDiv.setAttribute('data-testid', 'primaryColumn');
   newDiv.classList.add('primaryColumn');
+  console.log('createInfo', accountInfo);
 
   let { address, assets, totalBalanceUsd, totalCount } = accountInfo;
 
@@ -132,12 +137,12 @@ function createInfo(accountInfo) {
 
   return newDiv;
 }
-
 function createNullAccount(address) {
   const newDiv = document.createElement('div');
   newDiv.setAttribute('data-testid', 'primaryColumn');
   newDiv.classList.add('primaryColumn');
 
+  console.log('headerNode');
   // Portfolio header
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
   const addressNode = createSpan(addressShort);
@@ -151,6 +156,7 @@ function createNullAccount(address) {
   );
   headerNode.classList.add('header');
 
+  console.log('bodyNode');
   // Portfolio body
   const errorNode = createSpan('No data available, please refresh the page.');
   const bodyNode = document.createElement('div');
@@ -172,6 +178,13 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
     sendResponse('receieved addPortfolio message');
 
-    return true; // This will keep the message channel open until `sendResponse` is called.
+    return true;
   }
+});
+
+window.onload = (event) => {
+  console.log('page is fully loaded', event);
+};
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('DOMContentLoaded');
 });

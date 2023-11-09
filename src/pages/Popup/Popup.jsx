@@ -108,7 +108,7 @@ const Popup = () => {
 
       <footer className="footer">
         <a
-          href={`${TWITTER_URL}/${TWITTER_ACCOUNT_NAME}`}
+          href={`${TWITTER_URL}`}
           target="_blank"
           className="c-gray fs-xs"
           rel="noreferrer"
