@@ -5,7 +5,6 @@ import {
 import { getAccountInfo, getTokenInfo } from '../../apis/serverAPI';
 
 console.log('background');
-let contentScriptReady = false;
 let messageQueue = [];
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -37,33 +36,52 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   if (message.action === 'content_script_ready') {
-    contentScriptReady = true;
+    console.log('content_script_ready, view message queue', messageQueue);
     messageQueue.forEach((message) => {
-      chrome.runtime.sendMessage(message);
+      injectToContent(message);
     });
     messageQueue = [];
-    setTimeout(() => {
-      contentScriptReady = false;
-    }, 5000);
+
+    return true;
   }
 });
 
 // Portfolio Injection
 chrome.webNavigation.onDOMContentLoaded.addListener(
-  function (details) {
-    console.log(details, 'onDOMContentLoaded');
+  (details) => {
     let address = details.url.split('=')[1];
     if (address.length === 42) {
       let message = {
         action: 'addPortfolio',
         address: address,
       };
-      if (contentScriptReady) {
-        chrome.runtime.sendMessage(message);
-      } else messageQueue.push(message);
+      messageQueue.push(message);
     }
   },
   {
     url: [{ urlPrefix: 'https://twitter.com/portfolio' }],
   }
 );
+
+function injectToContent(msg) {
+  // background.js
+
+  const targetUrlPattern = 'https://twitter.com/portfolio?address=';
+
+  chrome.tabs.query({}, (tabs) => {
+    for (const tab of tabs) {
+      if (tab.url && tab.url.includes(targetUrlPattern)) {
+        // Send a message to the first matching tab
+        chrome.tabs.sendMessage(tab.id, msg, (response) => {
+          if (chrome.runtime.lastError) {
+            console.error(chrome.runtime.lastError);
+          } else {
+            console.log('Sent message to the matching tab:', tab);
+            console.log('Received response from content script:', response);
+          }
+        });
+        break; // Exit the loop after sending the message to the first matching tab
+      }
+    }
+  });
+}

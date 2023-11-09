@@ -124,18 +124,17 @@ function createInfo(accountInfo) {
   return newDiv;
 }
 
-chrome.runtime.onMessage.addListener(async function (
-  request,
-  sender,
-  sendResponse
-) {
-  console.log('content msg', request, sender, sendResponse);
-  if (request.action === 'addPortfolio') {
-    try {
-      await getAccountInfo(request.address);
-      attachPortfolio(request.address);
-    } catch (error) {
-      console.log('Error: ', error.message);
-    }
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log('content msg', message, sender, sendResponse);
+  if (message.action === 'addPortfolio') {
+    getAccountInfo(message.address)
+      .then(attachPortfolio(message.address))
+      .catch((error) => {
+        console.log('Error: ', error.message);
+      });
+
+    sendResponse('ok from content script');
+
+    return true; // This will keep the message channel open until `sendResponse` is called.
   }
 });
