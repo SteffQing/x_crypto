@@ -20,5 +20,11 @@
 .env.production.local
 .history
 
+# lockfiles
+package-lock.json
+yarn.lock
+
 # secrets
 secrets.*.js
+package-lock.json
+yarn.lock
