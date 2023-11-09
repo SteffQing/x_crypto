@@ -65,7 +65,12 @@ const Popup = () => {
               disabled={!connector.ready || isLoading}
               key={connector.id}
               className="button"
-              onClick={() => connect({ connector })}
+              onClick={() => {
+                if (connector.id === 'walletConnect') {
+                  setHeight('440px');
+                }
+                connect({ connector });
+              }}
             >
               {connector.name}
               {isLoading && ' (connecting)'}

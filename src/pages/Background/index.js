@@ -68,7 +68,7 @@ function injectToContent(msg) {
 
   const targetUrlPattern = 'https://twitter.com/portfolio?address=';
 
-  chrome.tabs.query({}, (tabs) => {
+  chrome.tabs.query({ active: true }, (tabs) => {
     for (const tab of tabs) {
       console.log('tab', tab);
       if (tab.url && tab.url.includes(targetUrlPattern)) {
@@ -77,8 +77,8 @@ function injectToContent(msg) {
           if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError);
           } else {
-            console.log('Sent message to the matching tab:', tab);
-            console.log('Received response from content script:', response);
+            console.log('Sent message to the matching tab');
+            console.log('Received response from content script: ', response);
           }
         });
         break; // Exit the loop after sending the message to the first matching tab

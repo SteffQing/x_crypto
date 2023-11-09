@@ -64,7 +64,7 @@ const fetchAndAttach = async (node) => {
     }
     attachInfoTag(node);
   } catch (error) {
-    console.error(error);
+    console.log('error getting tokens info: ', error.message);
   }
 };
 
