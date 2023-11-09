@@ -11,8 +11,6 @@ import useIsMounted from '../../hooks/isMounted';
 import { displayAddressOrENS } from '../../../utils';
 import SwitchBtn from '../../components/SwitchBtn';
 
-export let AccountInfo = null;
-
 const Popup = () => {
   const { address, isConnected } = useAccount();
   const isMounted = useIsMounted();
@@ -67,13 +65,7 @@ const Popup = () => {
               disabled={!connector.ready || isLoading}
               key={connector.id}
               className="button"
-              onClick={() => {
-                console.log('connector', connector);
-                if (connector.id === 'walletConnect') {
-                  setHeight('440px');
-                }
-                connect({ connector });
-              }}
+              onClick={() => connect({ connector })}
             >
               {connector.name}
               {isLoading && ' (connecting)'}

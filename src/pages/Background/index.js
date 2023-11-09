@@ -64,12 +64,13 @@ chrome.webNavigation.onDOMContentLoaded.addListener(
 );
 
 function injectToContent(msg) {
-  // background.js
+  console.log('injectToContent');
 
   const targetUrlPattern = 'https://twitter.com/portfolio?address=';
 
   chrome.tabs.query({}, (tabs) => {
     for (const tab of tabs) {
+      console.log('tab', tab);
       if (tab.url && tab.url.includes(targetUrlPattern)) {
         // Send a message to the first matching tab
         chrome.tabs.sendMessage(tab.id, msg, (response) => {
