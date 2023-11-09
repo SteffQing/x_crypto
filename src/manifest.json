@@ -3,7 +3,7 @@
   "name": "Trading Xtension",
   "description": "Highlight crypto tokens info on Twitter",
   "version": "1.0.0",
-  "permissions": ["storage"],
+  "permissions": ["storage", "webNavigation"],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "icon-48x48.png"

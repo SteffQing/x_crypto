@@ -281,3 +281,12 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
   }
 });
+
+window.onload = function () {
+  chrome.runtime.sendMessage(
+    { action: 'content_script_ready' },
+    function (response) {
+      console.log(response, 'window.onload');
+    }
+  );
+};

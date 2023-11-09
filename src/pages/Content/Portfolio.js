@@ -31,13 +31,6 @@ export const addPortfolio = async (address) => {
   portfolio.setAttribute('href', `/portfolio?address=${address}`);
 
   tab.insertBefore(portfolio, firstChild.nextSibling);
-
-  try {
-    await getAccountInfo(address);
-    attachPortfolio(address);
-  } catch (error) {
-    console.log('Error: ', error.message);
-  }
 };
 export const removePortfolio = () => {
   const tab = document.querySelector("[aria-label='Primary']");
@@ -131,14 +124,18 @@ function createInfo(accountInfo) {
   return newDiv;
 }
 
-// Portfolio Injection
-chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
-  console.log('onHistoryStateUpdated: ', details);
-  // Check if the URL matches your desired pattern
-  if (details.url.includes('https://twitter.com/portfolio?address=')) {
-    // This URL matches your pattern, so you can execute your injection script here
-    // For example, you can inject your script using a method like this:
-    // injectScript();
-    console.log('Inject your script here');
+chrome.runtime.onMessage.addListener(async function (
+  request,
+  sender,
+  sendResponse
+) {
+  console.log('content msg', request, sender, sendResponse);
+  if (request.action === 'addPortfolio') {
+    try {
+      await getAccountInfo(request.address);
+      attachPortfolio(request.address);
+    } catch (error) {
+      console.log('Error: ', error.message);
+    }
   }
 });
