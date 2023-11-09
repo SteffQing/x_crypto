@@ -27,7 +27,6 @@ const onMutation = (mutations) => {
     for (const node of addedNodes) {
       if (node) {
         if (node.dataset && node.dataset.testid) {
-          // console.log("node.dataset.testid=" + node.dataset.testid)
           if (node.dataset.testid === 'cellInnerDiv') {
             fetchAndAttach(node);
           }

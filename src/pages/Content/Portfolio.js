@@ -3,6 +3,17 @@ import { createSpan, createTable, mergeToDiv } from './CreateElements';
 
 let accountMap = new Map();
 
+let intervalId = null;
+
+const startProcess = async (address) => {
+  console.log('startProcess');
+  await getAccountInfo(address);
+  intervalId = setInterval(() => {
+    const main = document.querySelector("[data-testid='primaryColumn']");
+    attachPortfolio(address, main);
+  }, 1000);
+};
+
 // Portfolio link button
 export const addPortfolio = async (address) => {
   removePortfolio();
@@ -83,29 +94,25 @@ const getAccountInfo = async (address) => {
 };
 
 // Portfolio HTML to inject
-function attachPortfolio(address) {
-  document.addEventListener('DOMContentLoaded', () => {
-    console.log('attachPortfolio', address);
-    const main = document.querySelector("[data-testid='primaryColumn']");
-    const sideBar = document.querySelector("[data-testid='sidebarColumn']");
-    const accountInfo = accountMap.get(address);
-    console.log('main node', main);
-    const parent = main.parentNode;
-    console.log('attachPortfolio parent', parent);
-    let newDiv = null;
-    if (!accountInfo) {
-      console.log('attachPortfolio null account');
-      newDiv = createNullAccount(address);
-      main.remove();
-    } else {
-      newDiv = createInfo(accountInfo);
-      console.log('attachPortfolio div', newDiv);
-      main.remove();
-    }
-    if (sideBar) {
-      parent.insertBefore(newDiv, sideBar);
-    } else parent.appendChild(newDiv);
-  });
+function attachPortfolio(address, main) {
+  if (!main) return;
+  clearInterval(intervalId);
+  const sideBar = document.querySelector("[data-testid='sidebarColumn']");
+  const accountInfo = accountMap.get(address);
+  const parent = main.parentNode;
+  let newDiv = null;
+  if (!accountInfo) {
+    console.log('attachPortfolio null account');
+    newDiv = createNullAccount(address);
+    main.remove();
+  } else {
+    newDiv = createInfo(accountInfo);
+    console.log('attachPortfolio div', newDiv);
+    main.remove();
+  }
+  if (sideBar) {
+    parent.insertBefore(newDiv, sideBar);
+  } else parent.appendChild(newDiv);
 }
 function createInfo(accountInfo) {
   const newDiv = document.createElement('div');
@@ -117,9 +124,13 @@ function createInfo(accountInfo) {
 
   // Portfolio header
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
+  console.log('address');
   const addressNode = createSpan(addressShort);
+  console.log('totalBalanceUsd');
   const totalBalanceUsdNode = createSpan(totalBalanceUsd, true);
+  console.log('totalCount');
   const totalCountNode = createSpan(totalCount);
+  console.log('The Node');
 
   const headerNode = mergeToDiv(
     addressNode,
@@ -170,21 +181,10 @@ function createNullAccount(address) {
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'addPortfolio') {
-    getAccountInfo(message.address)
-      .then(attachPortfolio(message.address))
-      .catch((error) => {
-        console.log('Error: ', error.message);
-      });
+    startProcess(message.address);
 
     sendResponse('receieved addPortfolio message');
 
     return true;
   }
-});
-
-window.onload = (event) => {
-  console.log('page is fully loaded', event);
-};
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOMContentLoaded');
 });

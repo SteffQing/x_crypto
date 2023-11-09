@@ -1,6 +1,7 @@
 import {
   MS_GET_ACCOUNT_INFO,
   MS_GET_TOKEN_INFO,
+  TWITTER_URL,
 } from '../../../utils/constant';
 import { getAccountInfo, getTokenInfo } from '../../apis/serverAPI';
 
@@ -59,16 +60,14 @@ chrome.webNavigation.onDOMContentLoaded.addListener(
     }
   },
   {
-    url: [{ urlPrefix: 'https://twitter.com/portfolio' }],
+    url: [{ urlPrefix: TWITTER_URL }],
   }
 );
 
 function injectToContent(msg) {
-  const targetUrlPattern = 'https://twitter.com/portfolio?address=';
-
   chrome.tabs.query({ active: true }, (tabs) => {
     for (const tab of tabs) {
-      if (tab.url && tab.url.includes(targetUrlPattern)) {
+      if (tab.url && tab.url.includes(TWITTER_URL)) {
         chrome.tabs.sendMessage(tab.id, msg, (response) => {
           if (chrome.runtime.lastError) {
             console.error(chrome.runtime.lastError);
