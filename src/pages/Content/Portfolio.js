@@ -118,29 +118,33 @@ function createInfo(accountInfo) {
   const newDiv = document.createElement('div');
   newDiv.setAttribute('data-testid', 'primaryColumn');
   newDiv.classList.add('primaryColumn');
-  console.log('createInfo', accountInfo);
+  newDiv.style.fontFamily = 'TwitterChirp';
 
   let { address, assets, totalBalanceUsd, totalCount } = accountInfo;
 
   // Portfolio header
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
-  console.log('address');
-  const addressNode = createSpan(addressShort);
-  console.log('totalBalanceUsd');
-  const totalBalanceUsdNode = createSpan(totalBalanceUsd, true);
-  console.log('totalCount');
-  const totalCountNode = createSpan(totalCount);
-  console.log('The Node');
+  const addressNode = createSpan(`Wallet Address: ${addressShort}`);
+  const totalBalanceUsdNode = createSpan(
+    totalBalanceUsd,
+    true,
+    '',
+    'Assets Value: '
+  );
+  const totalCountNode = createSpan(`Total Assets: 🔄️${totalCount}`);
 
   const headerNode = mergeToDiv(
     addressNode,
-    totalBalanceUsdNode,
-    totalCountNode
+    totalCountNode,
+    totalBalanceUsdNode
   );
   headerNode.classList.add('header');
+  headerNode.style.alignItems = 'flex-start';
 
   // Portfolio table
+  console.log('Table start');
   const table = createTable(assets);
+  console.log('Table end');
   table.classList.add('table');
 
   newDiv.appendChild(headerNode);

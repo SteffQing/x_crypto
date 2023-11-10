@@ -5,10 +5,8 @@ const { getAccountBalance } = require('./account');
 
 const app = express();
 
-// Allow requests from your Chrome extension
 app.use(cors());
 
-// Define your routes here
 app.get('/', async (req, res) => {
   try {
     const { symbols } = req.query;
@@ -60,7 +58,7 @@ app.get('/account', async (req, res) => {
     const data = await getAccountBalance(address);
     res.json(data);
   } catch (error) {
-    console.log('Error: ', error.message);
+    console.log('Error in /account: ', error.message);
     res.status(500).json({ error: error.message });
   }
 });

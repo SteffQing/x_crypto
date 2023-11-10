@@ -4,6 +4,8 @@
 }
 .primaryColumn .header {
   position: sticky;
+  flex-direction: column;
+  padding: 6px;
   top: -0.5px;
   z-index: 3;
   backface-visibility: hidden;
@@ -17,11 +19,34 @@
 }
 .primaryColumn .table {
   margin-top: 1rem;
+  width: 100%;
   background-color: #010010;
   margin: 0.4rem 0;
   padding: 0.2rem 0.3rem;
   border-radius: 8px;
   box-shadow: 0 0 0.5rem 0.1rem #000000;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.primaryColumn .table thead {
+  border-bottom: 1px solid #ffffff;
+  padding: 8px 12px;
+}
+.primaryColumn .table tbody {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+  gap: 6px;
+}
+.primaryColumn .table tr {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.primaryColumn .table tbody tr {
+  padding: 8px 0;
 }
 .primaryColumn .body {
   display: flex;

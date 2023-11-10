@@ -36,7 +36,7 @@ function createImage(url, symbol) {
   return image;
 }
 
-function createSpan(text, bool = false, type = null) {
+function createSpan(text, bool = false, type = null, prependText = null) {
   const span = document.createElement('span');
   span.style.whiteSpace = 'nowrap';
   if (bool) {
@@ -70,6 +70,9 @@ function createSpan(text, bool = false, type = null) {
     } else zeroText = document.createTextNode('💲0.0');
 
     // Append the parts to the container
+    if (prependText) {
+      container.appendChild(document.createTextNode(prependText));
+    }
     container.appendChild(zeroText);
     container.appendChild(subscriptNode);
     container.appendChild(document.createTextNode(value));
@@ -117,7 +120,7 @@ function createTable(assets) {
         blockchain,
         tokenSymbol,
         balance,
-        balanceUSD,
+        balanceUsd,
         tokenPrice,
         thumbnail,
       } = assets[i];
@@ -129,7 +132,7 @@ function createTable(assets) {
           cell.appendChild(imageSymbolNode);
           break;
         case 1:
-          const balance_span = createSpan(balance, true);
+          const balance_span = createSpan(balance, true, 'BALANCE');
           cell.appendChild(balance_span);
           break;
         case 2:
@@ -137,7 +140,7 @@ function createTable(assets) {
           cell.appendChild(price_span);
           break;
         case 3:
-          const balanceUSD_span = createSpan(balanceUSD, true);
+          const balanceUSD_span = createSpan(balanceUsd, true);
           cell.appendChild(balanceUSD_span);
           break;
         case 4:
