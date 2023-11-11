@@ -24,7 +24,6 @@ export const addPortfolio = async (address) => {
   const portfolio = firstChild.cloneNode(true);
   createPortfolioSVG(portfolio);
   window.addEventListener('resize', () => {
-    console.log('resize');
     if (window.innerWidth > 1280) {
       const spanElementOld = portfolio.querySelector('span');
       if (spanElementOld) return;
@@ -78,7 +77,6 @@ const setAccountInfo = (data) => {
   accountMap.set(data.address, data);
 };
 const getAccountInfo = async (address) => {
-  console.log('getAccountInfo', address);
   return new Promise((resolve, reject) => {
     const msg = {
       action: MS_GET_ACCOUNT_INFO,
@@ -106,12 +104,10 @@ function attachPortfolio(address, main) {
   const parent = main.parentNode;
   let newDiv = null;
   if (!accountInfo) {
-    console.log('attachPortfolio null account');
     newDiv = createNullAccount(address);
     main.remove();
   } else {
     newDiv = createInfo(accountInfo);
-    console.log('attachPortfolio div', newDiv);
     main.remove();
   }
   if (sideBar) {
@@ -133,6 +129,7 @@ function createInfo(accountInfo) {
   const totalBalanceUsdNode = createSpan(totalBalanceUsd, true);
   const assetValueNode = createSpan('Assets Value: ');
   const UsdBalanceNode = mergeToDiv(assetValueNode, totalBalanceUsdNode);
+  UsdBalanceNode.style.flexDirection = 'row';
   const totalCountNode = createSpan(`Total Assets: 🔄️${totalCount}`);
 
   const headerNode = mergeToDiv(addressNode, totalCountNode, UsdBalanceNode);
