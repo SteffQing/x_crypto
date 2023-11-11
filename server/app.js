@@ -54,6 +54,11 @@ app.get('/chart', async (req, res) => {
 app.get('/account', async (req, res) => {
   const { address } = req.query;
 
+  if (address.length !== 42) {
+    res.status(500).json({ error: 'Invalid address' });
+    return;
+  }
+
   try {
     const data = await getAccountBalance(address);
     res.json(data);

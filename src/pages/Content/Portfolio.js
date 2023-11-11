@@ -157,12 +157,11 @@ function createNullAccount(address) {
   newDiv.setAttribute('data-testid', 'primaryColumn');
   newDiv.classList.add('primaryColumn');
 
-  console.log('headerNode');
   // Portfolio header
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
   const addressNode = createSpan(addressShort);
-  const totalBalanceUsdNode = createSpan('0.00', true);
-  const totalCountNode = createSpan('0');
+  const totalBalanceUsdNode = createSpan('0.00', true, '', 'Assets Value: ');
+  const totalCountNode = createSpan(`Total Assets: 🔄️0`);
 
   const headerNode = mergeToDiv(
     addressNode,
@@ -171,7 +170,6 @@ function createNullAccount(address) {
   );
   headerNode.classList.add('header');
 
-  console.log('bodyNode');
   // Portfolio body
   const errorNode = createSpan('No data available, please refresh the page.');
   const bodyNode = document.createElement('div');

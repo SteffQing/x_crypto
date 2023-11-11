@@ -39,12 +39,15 @@ const getAccountBalance = async (walletAddress) => {
     walletAddress,
     nativeFirst: true,
   };
-  const { error, data } = await fetchAnkrData('ankr_getAccountBalance', params);
+  const { error, result } = await fetchAnkrData(
+    'ankr_getAccountBalance',
+    params
+  );
   if (error) {
     console.log('error: ', error.message);
     return null;
   }
-  const { assets, totalBalanceUsd, totalCount } = data.result;
+  const { assets, totalBalanceUsd, totalCount } = result;
   let _assets = assets.map((asset) => {
     const {
       blockchain,
