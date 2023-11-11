@@ -55,3 +55,21 @@
   align-items: center;
   justify-content: center;
 }
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.loading::after {
+  content: 'Loading Portfolio...';
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: #000000;
+  color: #ffffff;
+  opacity: 0.9;
+}

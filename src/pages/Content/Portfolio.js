@@ -7,6 +7,8 @@ let intervalId = null;
 
 const startProcess = async (address) => {
   console.log('startProcess');
+  const body = document.querySelector('body');
+  body.classList.add('loading');
   await getAccountInfo(address);
   intervalId = setInterval(() => {
     const main = document.querySelector("[data-testid='primaryColumn']");
@@ -97,6 +99,8 @@ const getAccountInfo = async (address) => {
 function attachPortfolio(address, main) {
   if (!main) return;
   clearInterval(intervalId);
+  const body = document.querySelector('body');
+  body.classList.remove('loading');
   const sideBar = document.querySelector("[data-testid='sidebarColumn']");
   const accountInfo = accountMap.get(address);
   const parent = main.parentNode;
@@ -114,6 +118,7 @@ function attachPortfolio(address, main) {
     parent.insertBefore(newDiv, sideBar);
   } else parent.appendChild(newDiv);
 }
+
 function createInfo(accountInfo) {
   const newDiv = document.createElement('div');
   newDiv.setAttribute('data-testid', 'primaryColumn');
@@ -125,19 +130,12 @@ function createInfo(accountInfo) {
   // Portfolio header
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
   const addressNode = createSpan(`Wallet Address: ${addressShort}`);
-  const totalBalanceUsdNode = createSpan(
-    totalBalanceUsd,
-    true,
-    '',
-    'Assets Value: '
-  );
+  const totalBalanceUsdNode = createSpan(totalBalanceUsd, true);
+  const assetValueNode = createSpan('Assets Value: ');
+  const UsdBalanceNode = mergeToDiv(assetValueNode, totalBalanceUsdNode);
   const totalCountNode = createSpan(`Total Assets: 🔄️${totalCount}`);
 
-  const headerNode = mergeToDiv(
-    addressNode,
-    totalCountNode,
-    totalBalanceUsdNode
-  );
+  const headerNode = mergeToDiv(addressNode, totalCountNode, UsdBalanceNode);
   headerNode.classList.add('header');
   headerNode.style.alignItems = 'flex-start';
 
@@ -160,14 +158,12 @@ function createNullAccount(address) {
   // Portfolio header
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
   const addressNode = createSpan(addressShort);
-  const totalBalanceUsdNode = createSpan('0.00', true, '', 'Assets Value: ');
+  const totalBalanceUsdNode = createSpan('0.00', true);
+  const assetValueNode = createSpan('Assets Value: ');
+  const UsdBalanceNode = mergeToDiv(assetValueNode, totalBalanceUsdNode);
   const totalCountNode = createSpan(`Total Assets: 🔄️0`);
 
-  const headerNode = mergeToDiv(
-    addressNode,
-    totalBalanceUsdNode,
-    totalCountNode
-  );
+  const headerNode = mergeToDiv(addressNode, totalCountNode, UsdBalanceNode);
   headerNode.classList.add('header');
 
   // Portfolio body

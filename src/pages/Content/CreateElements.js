@@ -36,7 +36,7 @@ function createImage(url, symbol) {
   return image;
 }
 
-function createSpan(text, bool = false, type = null, prependText = null) {
+function createSpan(text, bool = false, type = null) {
   const span = document.createElement('span');
   span.style.whiteSpace = 'nowrap';
   if (bool) {
@@ -70,9 +70,6 @@ function createSpan(text, bool = false, type = null, prependText = null) {
     } else zeroText = document.createTextNode('💲0.0');
 
     // Append the parts to the container
-    if (prependText) {
-      container.appendChild(document.createTextNode(prependText));
-    }
     container.appendChild(zeroText);
     container.appendChild(subscriptNode);
     container.appendChild(document.createTextNode(value));
