@@ -49,13 +49,13 @@ function createSpan(text, bool = false, type = null) {
     }
     if (Number(subscript) === -1) {
       if (type === 'BALANCE') {
-        span.textContent = value;
+        span.textContent = `0.${value}`;
       } else span.textContent = `💲0.${value}`;
       return span;
     }
     if (Number(subscript) === 0) {
       if (type === 'BALANCE') {
-        span.textContent = value;
+        span.textContent = `0.0${value}`;
       } else span.textContent = `💲0.0${value}`;
       return span;
     }

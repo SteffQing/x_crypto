@@ -23,11 +23,14 @@ export function stripPrice(price) {
   if (Math.floor(Number(price)) > 0) {
     return { subscript: null, value: formatVolume(price) };
   }
+  if (Number(price) === 0) {
+    return { subscript: null, value: '0' };
+  }
   // Split on decimal
   const [, decimal] = price.split('.');
 
   // Remove trailing zeros
-  const value = decimal.replace(/0+/g, '');
+  const value = decimal.replace(/^0+/, '');
 
   // Get substring of just zeros
   const zeros = decimal.slice(0, -value.length);

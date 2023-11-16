@@ -1,6 +1,7 @@
 .primaryColumn {
   width: 100%;
   padding: 0 1rem;
+  padding-bottom: 2rem;
 }
 .primaryColumn .header {
   position: sticky;
@@ -10,6 +11,9 @@
   z-index: 3;
   backface-visibility: hidden;
   border-bottom: 2px solid black;
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  background-color: rgba(17, 25, 40, 0.75);
 }
 .primaryColumn .header div {
   display: flex;
@@ -31,7 +35,17 @@
 }
 .primaryColumn .table thead {
   border-bottom: 1px solid #ffffff;
-  padding: 8px 12px;
+}
+.primaryColumn .table thead tr {
+  padding: 8px 0;
+  justify-content: unset !important;
+}
+.primaryColumn .table thead tr th {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .primaryColumn .table tbody {
   display: flex;
@@ -48,6 +62,16 @@
 .primaryColumn .table tbody tr {
   padding: 8px 0;
 }
+.primaryColumn .table tbody td {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* .primaryColumn .table tbody td:first-child {
+  justify-content: flex-start;
+} */
 .primaryColumn .body {
   display: flex;
   height: 400px;
@@ -72,4 +96,90 @@
   background: #000000;
   color: #ffffff;
   opacity: 0.9;
+}
+/* Modal */
+.modalWrapper {
+  position: fixed;
+  top: 20rem;
+  left: 50%;
+  transform: translateX(-50%);
+  backdrop-filter: blur(16px);
+  z-index: 999;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+  height: 100%;
+}
+.modal {
+  border: 1px solid #010010;
+  border-radius: 12px;
+  display: flex;
+  padding: 10px 12px;
+  flex-direction: column;
+  background-color: #ffffff;
+  width: min(100%, 400px);
+}
+.inputBox {
+  display: flex;
+  flex-direction: column;
+}
+.inputBox .text {
+  margin: 0;
+  margin-bottom: 0.5rem;
+  font-size: 13px;
+  font-weight: 500;
+}
+.inputBox .arrow {
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+  border: 3px solid #243c5a;
+  margin: auto;
+  transition: all 300ms;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #e4dce4;
+}
+.inputBox .arrow:hover {
+  transform: translate(-50%, -50%) rotate(180deg);
+}
+
+.swapButton {
+  width: 100%;
+  cursor: pointer;
+  border-radius: 12px;
+  padding: 0.5rem 0;
+}
+
+.inputBox .inputDiv {
+  display: flex;
+  width: 100%;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+.inputBox .inputDiv .tokenTickerDiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.inputBox .inputDiv .tokenTickerDiv img {
+  width: 24px;
+  height: 24px;
+}
+.inputBox .inputDiv input {
+  font-size: 30px;
+  color: white;
+}
+
+/* SVG */
+.svgSize {
+  width: 1.5rem;
+  height: 1.5rem;
 }

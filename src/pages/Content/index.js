@@ -15,6 +15,7 @@ import {
   mergeToDiv,
 } from './CreateElements';
 import { addPortfolio, removePortfolio } from './Portfolio';
+import { TradeModal } from './TradeModal';
 
 const dataMap = new Map();
 
@@ -210,7 +211,11 @@ function createInfo(tokenInfo) {
       chartNode.style.display = 'none';
     }, 5000);
   });
-  const viewBuySellModal = createSpan('💱 Trade');
+  const viewTradeModal = createSpan('💱 Trade');
+  viewTradeModal.addEventListener('click', () => {
+    const modal = TradeModal();
+    document.body.appendChild(modal);
+  });
 
   // Address and Link
   const network = Networks.find((network) => network.id === networkId).name;
@@ -235,7 +240,7 @@ function createInfo(tokenInfo) {
     newDiv.appendChild(twitterLink);
   }
   newDiv.appendChild(viewChartNode);
-  newDiv.appendChild(viewBuySellModal);
+  newDiv.appendChild(viewTradeModal);
   newDiv.appendChild(chartNode);
 
   return newDiv;
