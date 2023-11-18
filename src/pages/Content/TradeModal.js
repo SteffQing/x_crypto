@@ -1,5 +1,5 @@
 import { mergeToDiv } from './CreateElements';
-import { ArrowButton, closeButton } from './CreateSVGAssets';
+import { ArrowButton, closeButton } from './CreateAssets';
 
 export function TradeModal(baseAsset, assets) {
   const modalWrapper = document.createElement('div');
@@ -32,12 +32,6 @@ function ModalHeader() {
   title.textContent = 'Swap';
   title.classList.add('text');
   title.style.margin = '0';
-
-  const closeButton = document.createElement('span');
-  closeButton.textContent = '✖️';
-  closeButton.addEventListener('click', () =>
-    document.querySelector('.modalWrapper').remove()
-  );
 
   modalHeader.appendChild(title);
   modalHeader.appendChild(closeButton);
