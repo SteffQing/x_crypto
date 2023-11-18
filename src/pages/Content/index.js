@@ -169,6 +169,7 @@ function createInfo(tokenInfo) {
     address,
     networkId,
     price,
+    name,
     bar,
   } = tokenInfo;
 
@@ -213,7 +214,13 @@ function createInfo(tokenInfo) {
   });
   const viewTradeModal = createSpan('💱 Trade');
   viewTradeModal.addEventListener('click', () => {
-    const modal = TradeModal();
+    const modal = TradeModal({
+      symbol,
+      imageThumbUrl,
+      address,
+      networkId,
+      name,
+    });
     document.body.appendChild(modal);
   });
 

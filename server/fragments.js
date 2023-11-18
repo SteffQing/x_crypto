@@ -53,7 +53,6 @@ query MyQuery($id:String!, $from:Int!, $to:Int! ) {
     from: $from
     to: $to
     resolution: "1D"
-    quoteToken: token1
   ) {
     o
     h
