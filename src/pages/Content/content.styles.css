@@ -1,3 +1,22 @@
+/* View styling */
+.x_defi-view-created {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #ffffff;
+  gap: 6px;
+  font-size: 12px;
+  position: relative;
+  border: 1px solid #d2d2d2;
+  border-radius: 4px;
+  padding: 4px 8px;
+  margin: 4px 0;
+}
+.pointer {
+  cursor: pointer;
+}
+
+/* Portfolio columns */
 .primaryColumn {
   width: 100%;
   padding: 0 1rem;

@@ -6,7 +6,7 @@ import {
   MS_GET_TOKEN_INFO,
   STORAGE_KEY,
 } from '../../../utils/constant';
-import { createChartNode } from './Chart';
+import { ChartModal } from './Chart';
 import { Networks } from './Networks';
 import {
   createImage,
@@ -175,18 +175,7 @@ function createInfo(tokenInfo) {
 
   newDiv.classList.add(CLASS_FOR_TAG);
   newDiv.id = symbol;
-  newDiv.style.display = 'flex';
-  newDiv.style.alignItems = 'center';
-  newDiv.style.justifyContent = 'space-between';
-  newDiv.style.backgroundColor = '#fff';
-  newDiv.style.gap = '6px';
   newDiv.style.fontFamily = 'TwitterChirp';
-  newDiv.style.border = '1px solid #d2d2d2';
-  newDiv.style.borderRadius = '4px';
-  newDiv.style.padding = '4px 8px';
-  newDiv.style.margin = '4px 0px';
-  newDiv.style.fontSize = '12px';
-  newDiv.style.position = 'relative';
   newDiv.style.color = fontColor;
 
   // Image and Symbol
@@ -200,17 +189,11 @@ function createInfo(tokenInfo) {
   const volumeNode = createSpan(`💹 $${formatVolume(volume)}`);
 
   // Chart and Buy/Sell
-  const chartNode = createChartNode(bar, newDiv);
   const viewChartNode = createSpan('📊 Chart');
-  viewChartNode.addEventListener('mouseover', () => {
-    chartNode.style.display = 'block';
-    chartNode.style.top = newDiv.offsetHeight + 'px';
-    chartNode.style.width = newDiv.offsetWidth + 'px';
-  });
-  viewChartNode.addEventListener('mouseout', () => {
-    setTimeout(() => {
-      chartNode.style.display = 'none';
-    }, 5000);
+  viewChartNode.addEventListener('click', () => {
+    const modal = ChartModal(bar);
+    console.log(modal, 'View Chart Modal');
+    document.body.appendChild(modal);
   });
   const viewTradeModal = createSpan('💱 Trade');
   viewTradeModal.addEventListener('click', () => {
@@ -221,8 +204,11 @@ function createInfo(tokenInfo) {
       networkId,
       name,
     });
+    console.log(modal, 'View Trade Modal');
     document.body.appendChild(modal);
   });
+  viewChartNode.classList.add('pointer');
+  viewTradeModal.classList.add('pointer');
 
   // Address and Link
   const network = Networks.find((network) => network.id === networkId).name;
@@ -248,7 +234,6 @@ function createInfo(tokenInfo) {
   }
   newDiv.appendChild(viewChartNode);
   newDiv.appendChild(viewTradeModal);
-  newDiv.appendChild(chartNode);
 
   return newDiv;
 }

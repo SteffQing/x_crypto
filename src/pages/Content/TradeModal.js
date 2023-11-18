@@ -4,6 +4,7 @@ import { ArrowButton, closeButton } from './CreateAssets';
 export function TradeModal(baseAsset, assets) {
   const modalWrapper = document.createElement('div');
   modalWrapper.classList.add('modalWrapper');
+  modalWrapper.innerHTML = '';
   const modal = document.createElement('div');
   modal.classList.add('modal');
   modal.style.fontFamily = 'TwitterChirp';
@@ -25,16 +26,16 @@ export function TradeModal(baseAsset, assets) {
 
   return modalWrapper;
 }
-function ModalHeader() {
+export function ModalHeader(titleContent = 'Swap') {
   const modalHeader = document.createElement('div');
   modalHeader.classList.add('modalHeader');
   const title = document.createElement('h1');
-  title.textContent = 'Swap';
+  title.textContent = titleContent;
   title.classList.add('text');
   title.style.margin = '0';
 
   modalHeader.appendChild(title);
-  modalHeader.appendChild(closeButton);
+  modalHeader.appendChild(closeButton());
   return modalHeader;
 }
 function InputBox() {

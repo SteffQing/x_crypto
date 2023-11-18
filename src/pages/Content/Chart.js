@@ -1,4 +1,5 @@
 import { CrosshairMode, createChart } from 'lightweight-charts';
+import { ModalHeader } from './TradeModal';
 
 const chartOptions = {
   width: 600,
@@ -53,4 +54,17 @@ function createChartNode(chartData) {
 
   return chartElement;
 }
-export { createChartNode };
+export function ChartModal(chartData) {
+  const modalWrapper = document.createElement('div');
+  modalWrapper.classList.add('modalWrapper');
+  modalWrapper.innerHTML = '';
+  const modal = document.createElement('div');
+  modal.classList.add('modal');
+  modal.style.fontFamily = 'TwitterChirp';
+
+  modal.appendChild(ModalHeader('Chart'));
+  modal.appendChild(createChartNode(chartData));
+  modalWrapper.appendChild(modal);
+
+  return modalWrapper;
+}
