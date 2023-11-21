@@ -279,3 +279,21 @@
   width: 1.5rem;
   height: 1.5rem;
 }
+
+/* Button for Trade */
+.trade_section {
+  display: flex;
+  margin: 0.5rem 0;
+  justify-content: space-between;
+}
+.trade_button {
+  color: #ffffff;
+  border: 1px solid #2ffc2b;
+  border-radius: 41px;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  font-weight: 500;
+  font-size: 13px;
+  transition: all 300ms;
+  cursor: pointer;
+}

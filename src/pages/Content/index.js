@@ -15,8 +15,6 @@ import {
   mergeToDiv,
 } from './CreateElements';
 import { addPortfolio, removePortfolio } from './Portfolio';
-import { TradeModal } from './TradeModal';
-import { SparklinesModal } from './Sparkline';
 
 const dataMap = new Map();
 
@@ -145,6 +143,7 @@ function attachInfoTag(node) {
         const newDiv = createInfo(matchedTag);
         const firstChild = selectedTweetTag.firstChild;
         selectedTweetTag.insertBefore(newDiv, firstChild);
+        attachPurchaseTag(selectedTweetTag, cashtag);
         cashtag_span.addEventListener('mouseover', () => {
           const recentTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
           if (recentTag) {
@@ -152,10 +151,21 @@ function attachInfoTag(node) {
           }
           const _firstChild = selectedTweetTag.firstChild;
           selectedTweetTag.insertBefore(newDiv, _firstChild);
+          attachPurchaseTag(selectedTweetTag, cashtag);
         });
       }
     }
   }
+}
+
+function attachPurchaseTag(tweetTextNode, cashtag) {
+  const parent = tweetTextNode.parentNode.parentNode;
+  const checkLastCTA = parent.querySelector(`#${cashtag}`);
+  if (checkLastCTA) {
+    checkLastCTA.remove();
+  }
+  const newDiv = createPurchase(cashtag);
+  parent.insertBefore(newDiv, parent.lastChild);
 }
 
 function createInfo(tokenInfo) {
@@ -197,19 +207,8 @@ function createInfo(tokenInfo) {
     // const modal = SparklinesModal(sparks, symbol);
     document.body.appendChild(modal);
   });
-  const viewTradeModal = createSpan('💱 Trade');
-  viewTradeModal.addEventListener('click', () => {
-    const modal = TradeModal({
-      symbol,
-      imageThumbUrl,
-      address,
-      networkId,
-      name,
-    });
-    document.body.appendChild(modal);
-  });
+
   viewChartNode.classList.add('pointer');
-  viewTradeModal.classList.add('pointer');
 
   // Address and Link
   const network = Networks.find((network) => network.id === networkId).name;
@@ -234,13 +233,37 @@ function createInfo(tokenInfo) {
     newDiv.appendChild(twitterLink);
   }
   newDiv.appendChild(viewChartNode);
-  newDiv.appendChild(viewTradeModal);
 
   return newDiv;
 }
 
-function  createPurchase(){
-  const buttons = [1,2,3,4,5]
+function createPurchase(cashtag) {
+  const newDiv = document.createElement('div');
+
+  newDiv.classList.add('trade_section');
+  newDiv.id = cashtag;
+  const buttons = ['X1', 'X2', 'Max'];
+  const switchType = createSpan('Buy ⚡ Sell');
+  let type = 'Buy';
+  switchType.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (type === 'Buy') {
+      type = 'Sell';
+    } else {
+      type = 'Buy';
+    }
+  });
+  newDiv.appendChild(switchType);
+  for (let button of buttons) {
+    const buttonNode = createSpan(`${type} ${button}`);
+    buttonNode.classList.add('trade_button');
+    buttonNode.addEventListener('click', (event) => {
+      event.stopPropagation();
+      console.log('button clicked', button);
+    });
+    newDiv.appendChild(buttonNode);
+  }
+  return newDiv;
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {
