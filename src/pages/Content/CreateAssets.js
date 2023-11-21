@@ -18,6 +18,7 @@ export const ArrowButton = (onClick) => {
 export const closeButton = () => {
   const closeButton = document.createElement('span');
   closeButton.textContent = '✖️';
+  closeButton.classList.add('pointer');
   closeButton.addEventListener('click', () =>
     document.querySelector('.modalWrapper').remove()
   );

@@ -45,16 +45,11 @@ function createChartNode(chartData) {
   const candleSeries = chart.addCandlestickSeries(candleSeriesSettings);
   candleSeries.setData(chartData);
 
-  chartElement.style.position = 'absolute';
-  chartElement.style.left = '0';
-  chartElement.style.zIndex = '999';
-  chartElement.style.display = 'none';
-  chartElement.style.width = '400px';
-  chartElement.style.top = '0px';
+  chartElement.classList.add('chartModal');
 
   return chartElement;
 }
-export function ChartModal(chartData) {
+export function ChartModal(chartData, tokenName) {
   const modalWrapper = document.createElement('div');
   modalWrapper.classList.add('modalWrapper');
   modalWrapper.innerHTML = '';
@@ -62,9 +57,13 @@ export function ChartModal(chartData) {
   modal.classList.add('modal');
   modal.style.fontFamily = 'TwitterChirp';
 
-  modal.appendChild(ModalHeader('Chart'));
-  modal.appendChild(createChartNode(chartData));
+  const chartNode = createChartNode(chartData);
+
+  modal.appendChild(ModalHeader('💲' + tokenName + ' Chart'));
+  modal.appendChild(chartNode);
   modalWrapper.appendChild(modal);
 
   return modalWrapper;
 }
+
+// Chart will be able to query the data from the API

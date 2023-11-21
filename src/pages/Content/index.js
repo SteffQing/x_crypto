@@ -16,6 +16,7 @@ import {
 } from './CreateElements';
 import { addPortfolio, removePortfolio } from './Portfolio';
 import { TradeModal } from './TradeModal';
+import { SparklinesModal } from './Sparkline';
 
 const dataMap = new Map();
 
@@ -171,6 +172,7 @@ function createInfo(tokenInfo) {
     price,
     name,
     bar,
+    sparks,
   } = tokenInfo;
 
   newDiv.classList.add(CLASS_FOR_TAG);
@@ -191,8 +193,8 @@ function createInfo(tokenInfo) {
   // Chart and Buy/Sell
   const viewChartNode = createSpan('📊 Chart');
   viewChartNode.addEventListener('click', () => {
-    const modal = ChartModal(bar);
-    console.log(modal, 'View Chart Modal');
+    const modal = ChartModal(bar, symbol);
+    // const modal = SparklinesModal(sparks, symbol);
     document.body.appendChild(modal);
   });
   const viewTradeModal = createSpan('💱 Trade');
@@ -204,7 +206,6 @@ function createInfo(tokenInfo) {
       networkId,
       name,
     });
-    console.log(modal, 'View Trade Modal');
     document.body.appendChild(modal);
   });
   viewChartNode.classList.add('pointer');
@@ -236,6 +237,10 @@ function createInfo(tokenInfo) {
   newDiv.appendChild(viewTradeModal);
 
   return newDiv;
+}
+
+function  createPurchase(){
+  const buttons = [1,2,3,4,5]
 }
 
 chrome.storage.local.get(STORAGE_KEY).then((values) => {

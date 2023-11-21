@@ -1,6 +1,11 @@
 const express = require('express');
 const cors = require('cors');
-const { searchToken, fetchTokenSocials, getChart } = require('./fragments');
+const {
+  searchToken,
+  fetchTokenSocials,
+  getChart,
+  getSparklines,
+} = require('./fragments');
 const { getAccountBalance } = require('./account');
 
 const app = express();
@@ -17,8 +22,9 @@ app.get('/', async (req, res) => {
       const { address, networkId } = searchResult;
       const socialsResults = await fetchTokenSocials(address, networkId);
       const bar = await getChart(address, networkId);
+      const sparks = await getSparklines(address, networkId);
       const { twitter } = socialsResults.socialLinks;
-      results.push({ ...searchResult, twitter, bar });
+      results.push({ ...searchResult, twitter, bar, sparks });
     }
     res.json(results);
   } catch (error) {
@@ -46,6 +52,14 @@ app.get('/chart', async (req, res) => {
   const { address, networkId } = req.query;
 
   const data = await getChart(address, networkId);
+
+  res.json(data);
+});
+
+app.get('/sparkline', async (req, res) => {
+  const { address, networkId } = req.query;
+
+  const data = await getSparklines(address, networkId);
 
   res.json(data);
 });

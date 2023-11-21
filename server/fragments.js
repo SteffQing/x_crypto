@@ -62,6 +62,15 @@ query MyQuery($id:String!, $from:Int!, $to:Int! ) {
   }
 }
 `;
+const fetchTokenSparklinesOperation = `
+query MyQuery($id: String!) {
+  tokenSparklines(input: {ids: [$id]}) {
+    sparkline {
+      timestamp
+      value
+    }
+  }
+}`;
 
 async function searchToken(name) {
   const { errors, data } = await fetchGraphQL(
@@ -95,7 +104,7 @@ async function getChart(address, networkId) {
   const { errors, data } = await fetchGraphQL(
     fetchTokenChartOperation,
     'MyQuery',
-    { id: id, from: to - 2419200, to: to }
+    { id: id, from: to - 4838400, to: to }
   );
   if (errors) {
     console.error(errors);
@@ -119,4 +128,28 @@ async function getChart(address, networkId) {
   return bars;
 }
 
-module.exports = { searchToken, fetchTokenSocials, getChart, num };
+async function getSparklines(address, networkId) {
+  const id = `${address}:${networkId}`;
+  const { errors, data } = await fetchGraphQL(
+    fetchTokenSparklinesOperation,
+    'MyQuery',
+    { id: id }
+  );
+  if (errors) {
+    console.error(errors);
+    return null;
+  }
+  const sparklines = data.tokenSparklines[0].sparkline.map((line) => ({
+    time: line.timestamp,
+    value: line.value,
+  }));
+  return sparklines;
+}
+
+module.exports = {
+  searchToken,
+  fetchTokenSocials,
+  getChart,
+  num,
+  getSparklines,
+};

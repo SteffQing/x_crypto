@@ -16,6 +16,21 @@
   cursor: pointer;
 }
 
+/* Charts styling */
+.chartModal {
+  width: 100%;
+  height: 300px;
+  position: relative;
+  overflow: hidden;
+  margin: 1rem 0;
+}
+.chartModal > div {
+  position: absolute;
+  overflow: unset !important;
+  left: -13rem;
+  width: 100%;
+}
+
 /* Portfolio columns */
 .primaryColumn {
   width: 100%;
@@ -144,6 +159,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+.modal .modalHeader h1 {
+  font-size: 1.25rem;
+  font-weight: 400;
 }
 .inputBox {
   display: flex;
