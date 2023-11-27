@@ -2,6 +2,7 @@ import { num } from '../../../server/fragments';
 import { cashtag_regex, formatVolume, stripSocials } from '../../../utils';
 import {
   ACCOUNT_KEY,
+  CLASS_FOR_PURCHASE,
   CLASS_FOR_TAG,
   MS_GET_TOKEN_INFO,
   STORAGE_KEY,
@@ -15,12 +16,11 @@ import {
   mergeToDiv,
 } from './CreateElements';
 import { addPortfolio, removePortfolio } from './Portfolio';
+import { createPurchase } from './Swap';
 
 const dataMap = new Map();
 
 const fontColor = '#888';
-
-console.log('content');
 
 const onMutation = (mutations) => {
   for (const { addedNodes } of mutations) {
@@ -63,7 +63,7 @@ const fetchAndAttach = async (node) => {
     }
     attachInfoTag(node);
   } catch (error) {
-    console.log('error getting tokens info: ', error.message);
+    console.log('error fetchAndAttach: ', error.message);
   }
 };
 
@@ -143,7 +143,7 @@ function attachInfoTag(node) {
         const newDiv = createInfo(matchedTag);
         const firstChild = selectedTweetTag.firstChild;
         selectedTweetTag.insertBefore(newDiv, firstChild);
-        attachPurchaseTag(selectedTweetTag, cashtag);
+        attachPurchaseTag(selectedTweetTag);
         cashtag_span.addEventListener('mouseover', () => {
           const recentTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
           if (recentTag) {
@@ -151,20 +151,20 @@ function attachInfoTag(node) {
           }
           const _firstChild = selectedTweetTag.firstChild;
           selectedTweetTag.insertBefore(newDiv, _firstChild);
-          attachPurchaseTag(selectedTweetTag, cashtag);
+          attachPurchaseTag(selectedTweetTag);
         });
       }
     }
   }
 }
 
-function attachPurchaseTag(tweetTextNode, cashtag) {
+function attachPurchaseTag(tweetTextNode) {
   const parent = tweetTextNode.parentNode.parentNode;
-  const checkLastCTA = parent.querySelector(`#${cashtag}`);
+  const checkLastCTA = parent.querySelector(`.${CLASS_FOR_PURCHASE}`);
   if (checkLastCTA) {
     checkLastCTA.remove();
   }
-  const newDiv = createPurchase(cashtag);
+  const newDiv = createPurchase();
   parent.insertBefore(newDiv, parent.lastChild);
 }
 
@@ -180,9 +180,7 @@ function createInfo(tokenInfo) {
     address,
     networkId,
     price,
-    name,
     bar,
-    sparks,
   } = tokenInfo;
 
   newDiv.classList.add(CLASS_FOR_TAG);
@@ -234,35 +232,6 @@ function createInfo(tokenInfo) {
   }
   newDiv.appendChild(viewChartNode);
 
-  return newDiv;
-}
-
-function createPurchase(cashtag) {
-  const newDiv = document.createElement('div');
-
-  newDiv.classList.add('trade_section');
-  newDiv.id = cashtag;
-  const buttons = ['X1', 'X2', 'Max'];
-  const switchType = createSpan('Buy ⚡ Sell');
-  let type = 'Buy';
-  switchType.addEventListener('click', (event) => {
-    event.stopPropagation();
-    if (type === 'Buy') {
-      type = 'Sell';
-    } else {
-      type = 'Buy';
-    }
-  });
-  newDiv.appendChild(switchType);
-  for (let button of buttons) {
-    const buttonNode = createSpan(`${type} ${button}`);
-    buttonNode.classList.add('trade_button');
-    buttonNode.addEventListener('click', (event) => {
-      event.stopPropagation();
-      console.log('button clicked', button);
-    });
-    newDiv.appendChild(buttonNode);
-  }
   return newDiv;
 }
 
