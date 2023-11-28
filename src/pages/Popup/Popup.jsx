@@ -1,19 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import './Popup.css';
-import { useAccount, useConnect, useDisconnect, useEnsName } from 'wagmi';
-import {
-  STORAGE_KEY,
-  ACCOUNT_KEY,
-  TWITTER_ACCOUNT_NAME,
-  TWITTER_URL,
-} from '../../../utils/constant';
-import useIsMounted from '../../hooks/isMounted';
+import { STORAGE_KEY, ACCOUNT_KEY, TWITTER_URL } from '../../../utils/constant';
 import SwitchBtn from '../../components/SwitchBtn';
+import { Wallet } from 'ethers';
 
 const Popup = () => {
-  const [pk, setPk] = useState('');
+  const [pk, setPk] = useState(null);
   const [err, setErr] = useState('');
-  const [height, setHeight] = useState('');
   const [isViewStat, setViewStat] = useState(false);
 
   const onClickSwitch = () => {
@@ -29,8 +22,10 @@ const Popup = () => {
     } else if (value.slice(0, 2) !== '0x') {
       setErr('Private Key must start with 0x');
     } else {
-      setPk(value);
-      chrome.storage.local.set({ [ACCOUNT_KEY]: value });
+      const wallet = new Wallet(value);
+      const data = { account: wallet.address, privateKey: value };
+      setPk(data);
+      chrome.storage.local.set({ [ACCOUNT_KEY]: data });
     }
   };
 
@@ -45,7 +40,6 @@ const Popup = () => {
     });
     chrome.storage.local.get(ACCOUNT_KEY).then((values) => {
       if (values.hasOwnProperty(ACCOUNT_KEY)) {
-        console.log(values[ACCOUNT_KEY], 'Private Key');
         setPk(values[ACCOUNT_KEY]);
       }
     });
@@ -54,25 +48,40 @@ const Popup = () => {
 
   return (
     <main className="container">
-      <header className="header" style={{ height: height }}>
+      <header className="header">
         <h1 className="c-white fs-xl">{`Trading Xtension`}</h1>
         <h1 className="c-white fs-md">{`The Chrome extension for DeFi in Twitter`}</h1>
       </header>
 
       <section className="section">
-        <div className="flex">
-          <label
-            className="c-white fs-md"
-            htmlFor="input_pk"
-          >{`Enter your private key`}</label>
-          <input
-            type="text"
-            onChange={onChangePk}
-            placeholder="Enter private key"
-            id="input_pk"
-          />
-          <div className="warning">{err}</div>
-        </div>
+        {!pk ? (
+          <div className="flex">
+            <label
+              className="c-white fs-md"
+              htmlFor="input_pk"
+            >{`Enter your private key`}</label>
+            <input
+              type="text"
+              onChange={onChangePk}
+              placeholder="Enter private key"
+              id="input_pk"
+            />
+            <div className="warning">{err}</div>
+          </div>
+        ) : (
+          <div>
+            <div className="c-white fs-md">{`Your account`}</div>
+
+            <a
+              className="c-white fs-md"
+              href={TWITTER_URL + pk.account}
+              target="_blank"
+              rel="noreferrer"
+            >
+              {`${pk.account.substring(0, 4)}...${pk.account.slice(-3)}`}
+            </a>
+          </div>
+        )}
         {isViewStat !== null && (
           <div onClick={() => onClickSwitch()} className="c-white fs-md">
             {`Turn ${isViewStat ? 'Off' : 'On'} Widget`}{' '}

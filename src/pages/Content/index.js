@@ -22,6 +22,8 @@ const dataMap = new Map();
 
 const fontColor = '#888';
 
+let account = null;
+
 const onMutation = (mutations) => {
   for (const { addedNodes } of mutations) {
     for (const node of addedNodes) {
@@ -164,7 +166,7 @@ function attachPurchaseTag(tweetTextNode) {
   if (checkLastCTA) {
     checkLastCTA.remove();
   }
-  const newDiv = createPurchase();
+  const newDiv = createPurchase(account);
   parent.insertBefore(newDiv, parent.lastChild);
 }
 
@@ -242,9 +244,10 @@ chrome.storage.local.get(STORAGE_KEY).then((values) => {
 });
 chrome.storage.local.get(ACCOUNT_KEY).then((values) => {
   if (values.hasOwnProperty(ACCOUNT_KEY) && values[ACCOUNT_KEY]) {
-    const account = values[ACCOUNT_KEY];
-    if (account.isConnected && account.account) {
-      addPortfolio(account.account);
+    const value = values[ACCOUNT_KEY];
+    if (value.account) {
+      account = value;
+      addPortfolio(value.account);
     }
   }
 });
@@ -264,8 +267,9 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     }
     if (key === ACCOUNT_KEY) {
       const newValue = changes[key].newValue;
-      if (newValue.isConnected && newValue.account) {
+      if (newValue.account) {
         console.log('portfolio in');
+        account = newValue;
         addPortfolio(newValue.account);
       } else {
         console.log('remove portfolio');

@@ -1,5 +1,6 @@
 const { CLASS_FOR_PURCHASE, TWITTER_URL } = require('../../../utils/constant');
 const { createSpan, createLink } = require('./CreateElements');
+
 const colors = [
   '2dcoff',
   'FB50FF',
@@ -7,11 +8,11 @@ const colors = [
   ['68cbfa', '2896c2', '45b1df'],
 ];
 let trade = 'Buy';
-export function createPurchase(addr) {
+export function createPurchase(account) {
   const newDiv = document.createElement('div');
   newDiv.classList.add(CLASS_FOR_PURCHASE);
 
-  newDiv.appendChild(WalletSpan(addr));
+  newDiv.appendChild(WalletSpan(account.account));
   newDiv.appendChild(BuySellSpan(newDiv));
   Purchase(newDiv);
 
