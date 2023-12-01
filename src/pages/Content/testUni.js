@@ -1,11 +1,19 @@
 const swap = require('./TestUniV3');
 
 (async () => {
-  let tokenData = {
-    address: '0x514910771af9ca656af840dff83e8264ecf986ca',
-    decimals: 18,
-    networkId: 1,
-  };
-  const hash = await swap(tokenData);
-  console.log(hash);
+  try {
+    let tokenData = {
+      address: '0x514910771AF9Ca656af840dff83E8264EcF986CA',
+      decimals: 18,
+      networkId: 1,
+      name: 'ChainLink Token',
+      symbol: 'LINK',
+    };
+    let inputAmount = '0.001';
+    let saleType = 'Buy';
+    const hash = await swap(tokenData, inputAmount, saleType);
+    console.log(hash);
+  } catch (error) {
+    console.log('err: ', error.message);
+  }
 })();
