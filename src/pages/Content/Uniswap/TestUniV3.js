@@ -4,10 +4,10 @@ const { Contract, Wallet, ethers } = require('ethers');
 const erc20ABI = require('../abi/erc20ABI.json');
 const UniversalRouter = require('./UniversalRouter');
 const {
-  v3Router,
   getProvider,
   toReadableAmount,
   fromReadableAmount,
+  SWAP_ROUTER_ADDRESS,
 } = require('./constants');
 const AlphaRouter = require('./AlphaRouter');
 
@@ -39,19 +39,19 @@ async function swap(tokenData, inputAmount, saleType = 'Buy') {
     if (!isApproved) {
       throw new Error('Token transfer approval failed');
     }
-
-    // let _trade = await UniversalRouter(
-    //   TokenIn,
-    //   TokenOut,
-    //   amount,
-    //   wallet.address
-    // );
     console.log('approved...');
-    let _trade = await AlphaRouter(TokenIn, TokenOut, amount, wallet.address);
+
+    let trade = await UniversalRouter(
+      TokenIn,
+      TokenOut,
+      amount,
+      wallet.address
+    );
+    // let trade = await AlphaRouter(TokenIn, TokenOut, amount, wallet.address);
     console.log('trading...');
-    const txRes = await wallet.sendTransaction(_trade);
-    console.log('traded!');
+    const txRes = await wallet.sendTransaction(trade);
     const res = await txRes.wait();
+    console.log('traded!');
 
     return res.transactionHash;
   } catch (error) {
@@ -68,7 +68,7 @@ module.exports = swap;
  * @param {Token} token - token object
  * @param {number} amount - amount of tokens to approve
  * @param {Wallet} wallet - A wallet instance to sign a transaction to approve token transfer
- * @return {boolean} A boolean to indicate success or failure.
+ * @return {Promise<boolean>} A boolean to indicate success or failure.
  *
  */
 async function aggTokenApproval(token, amount, wallet) {
@@ -76,7 +76,7 @@ async function aggTokenApproval(token, amount, wallet) {
     const tokenContract = new Contract(token.address, erc20ABI, wallet);
     const approvedAmount = await tokenContract.allowance(
       wallet.address,
-      v3Router
+      SWAP_ROUTER_ADDRESS
     );
     let _approvedAmount = toReadableAmount(approvedAmount, token.decimals);
     if (Number(_approvedAmount) >= amount) {
@@ -85,7 +85,7 @@ async function aggTokenApproval(token, amount, wallet) {
 
     console.log('approving...');
     let _amount = fromReadableAmount(amount, token.decimals);
-    await tokenContract.approve(v3Router, _amount);
+    await tokenContract.approve(SWAP_ROUTER_ADDRESS, _amount);
     return true;
   } catch (e) {
     console.error(e);

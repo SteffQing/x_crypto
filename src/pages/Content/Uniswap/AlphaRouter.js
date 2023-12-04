@@ -5,13 +5,17 @@ const {
   TradeType,
   Token,
 } = require('@uniswap/sdk-core');
-const { SwapType, AlphaRouter } = require('@uniswap/smart-order-router');
+const {
+  SwapType,
+  AlphaRouter,
+  SwapRoute,
+} = require('@uniswap/smart-order-router');
 const JSBI = require('jsbi');
 const {
   getProvider,
   MAX_FEE_PER_GAS,
   MAX_PRIORITY_FEE_PER_GAS,
-  v3Router,
+  SWAP_ROUTER_ADDRESS,
 } = require('./constants');
 
 /**
@@ -20,7 +24,7 @@ const {
  * @param {Token} tokenOut - Token object for token to received..
  * @param {number} amount - Token amount to swap
  * @param {string} walletAddress - Wallet address
- * @returns {string} - Wallet address.
+ * @returns {ethers.providers.TransactionRequest} - tx request
  *
  */
 async function trade(tokenIn, tokenOut, amount, walletAddress) {
@@ -35,7 +39,7 @@ async function trade(tokenIn, tokenOut, amount, walletAddress) {
 
   const tx = {
     data: route.methodParameters.calldata,
-    to: v3Router,
+    to: SWAP_ROUTER_ADDRESS,
     value: route.methodParameters.value,
     from: walletAddress,
     maxFeePerGas: maxFeePerGas,
@@ -61,16 +65,19 @@ async function trade(tokenIn, tokenOut, amount, walletAddress) {
  */
 async function getRoute(address, amount, tokenIn, tokenOut) {
   const provider = getProvider();
-  const options = {
-    recipient: address,
-    slippageTolerance: new Percent(50, 100),
-    deadline: Math.floor(Date.now() / 1000 + 1800),
-    type: SwapType.SWAP_ROUTER_02,
-  };
+
   const router = new AlphaRouter({
     chainId: tokenIn.chainId,
     provider: provider,
   });
+
+  const options = {
+    recipient: address,
+    slippageTolerance: new Percent(50, 10_000),
+    deadline: Math.floor(Date.now() / 1000 + 1800),
+    type: SwapType.SWAP_ROUTER_02,
+  };
+
   const inputAmount = CurrencyAmount.fromRawAmount(
     tokenIn,
     fromReadableAmount(amount, tokenIn.decimals).toString()

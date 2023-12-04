@@ -33,7 +33,7 @@ const quote = require('./Quote');
  * @param {Token} tokenIn - Token object for token to be swapped..
  * @param {Token} tokenOut - Token object for token to be received.
  * @param {number} amount - Amount of token to be swapped.
- * @returns {string} - Wallet address.
+ * @returns {Promise<Trade<Token, Token, TradeType.EXACT_INPUT>>} - Wallet address.
  */
 async function createTrade(tokenIn, tokenOut, amount) {
   const poolInfo = await getPoolInfo(tokenIn, tokenOut);
@@ -49,8 +49,7 @@ async function createTrade(tokenIn, tokenOut, amount) {
 
   const swapRoute = new Route([pool], tokenIn, tokenOut);
 
-  console.log(1);
-  //   const amountOut = await getOutputQuote(swapRoute, tokenIn, amount);
+  // const amountOut = await getOutputQuote(swapRoute, tokenIn, amount);
   const amountOut = await quote(tokenIn, tokenOut, amount);
 
   const uncheckedTrade = Trade.createUncheckedTrade({
@@ -73,8 +72,9 @@ async function createTrade(tokenIn, tokenOut, amount) {
 /**
  * Function to execute a trade.
  * @param {TradeType} trade - Trade object.
+ * @param {string} walletAddress - Wallet address.
  *
- * @returns {Promise<TransactionState>} - Transaction state.
+ * @returns {Promise<ethers.providers.TransactionRequest>} - tx request.
  */
 async function executeTrade(trade, walletAddress) {
   const options = {
@@ -85,13 +85,19 @@ async function executeTrade(trade, walletAddress) {
 
   const methodParameters = SwapRouter.swapCallParameters([trade], options);
 
+  const { maxFeePerGas, maxPriorityFeePerGas } =
+    await getProvider().getFeeData();
+
   const tx = {
     data: methodParameters.calldata,
     to: SWAP_ROUTER_ADDRESS,
     value: methodParameters.value,
     from: walletAddress,
-    maxFeePerGas: MAX_FEE_PER_GAS,
-    maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
+    maxFeePerGas: maxFeePerGas,
+    maxPriorityFeePerGas: maxPriorityFeePerGas,
+    // maxFeePerGas: MAX_FEE_PER_GAS,
+    // maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
+    gasLimit: 3e7,
   };
 
   return tx;
@@ -134,7 +140,7 @@ async function getOutputQuote(route, tokenIn, amount) {
  * @param {Token} tokenOut - Token object for token to be received.
  * @param {number} amount - Amount of token to be swapped.
  * @param {string} walletAddress - Wallet address.
- * @returns {Promise<TransactionState>} - Transaction state
+ * @returns {Promise<ethers.providers.TransactionRequest>} - Transaction state
  */
 async function trade(tokenIn, tokenOut, amount, walletAddress) {
   const trade = await createTrade(tokenIn, tokenOut, amount);

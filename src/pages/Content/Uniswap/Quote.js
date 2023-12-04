@@ -19,7 +19,7 @@ const {
  * @param {Token} tokenIn - Token object for token to be swapped.
  * @param {Token} tokenOut - Token object for token to be received.
  * @param {number} amountIn - Amount of token to be swapped.
- * @returns {string} - Quoted amount of tokenOut.
+ * @returns {Promise<string>} - Quoted amount of tokenOut.
  */
 async function quote(tokenIn, tokenOut, amountIn) {
   const provider = getProvider();
