@@ -161,6 +161,9 @@ function attachInfoTag(node) {
 }
 
 function attachPurchaseTag(tweetTextNode) {
+  if (!account) {
+    return;
+  }
   const parent = tweetTextNode.parentNode.parentNode;
   const checkLastCTA = parent.querySelector(`.${CLASS_FOR_PURCHASE}`);
   if (checkLastCTA) {
