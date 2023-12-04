@@ -42,10 +42,10 @@ async function trade(tokenIn, tokenOut, amount, walletAddress) {
     to: SWAP_ROUTER_ADDRESS,
     value: route.methodParameters.value,
     from: walletAddress,
-    maxFeePerGas: maxFeePerGas,
-    maxPriorityFeePerGas: maxPriorityFeePerGas,
-    // maxFeePerGas: MAX_FEE_PER_GAS,
-    // maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
+    // maxFeePerGas: maxFeePerGas,
+    // maxPriorityFeePerGas: maxPriorityFeePerGas,
+    maxFeePerGas: MAX_FEE_PER_GAS,
+    maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
     gasLimit: 3e7,
   };
 
@@ -60,7 +60,7 @@ async function trade(tokenIn, tokenOut, amount, walletAddress) {
  * @param {Token} tokenIn - Token object
  * @param {Token} tokenOut - token object
  * @param {('Buy' | 'Sell')} swapType - Indicates the type of swap
- * @return {SwapRoute | null} A SwapRoute object or null.
+ * @return {Promise<SwapRoute | null>} A SwapRoute object or null.
  *
  */
 async function getRoute(address, amount, tokenIn, tokenOut) {

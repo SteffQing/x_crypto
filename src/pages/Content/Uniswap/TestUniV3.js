@@ -21,18 +21,27 @@ let pk = '0xbe903edf0be27f6e59cb6dce608268f320dc42a0cbd2e188549a982939aee5ac';
  * @param {Token} tokenData: {address: string, decimal: number | string, networkId: number | string, name: string, symbol: string} - A Token object param (see https://uniswap.org/docs/v2/SDK/token/).
  * @param {string} inputAmount - tokens to swap
  * @param {('Buy' | 'Sell')} saleType='Buy' - A optional string param for sale type (Buy or Sell).
- * @return {string} A string to indicate success or failure.
+ * @return {Promise<string>} A string to indicate success or failure.
  *
  */
 async function swap(tokenData, inputAmount, saleType = 'Buy') {
   const provider = getProvider();
   const { address, decimals, networkId, name, symbol } = tokenData;
   const token = new Token(networkId, address, Number(decimals), symbol, name);
+  let weth = WETH9[networkId];
+  if (!weth) {
+    weth = new Token(
+      networkId,
+      '0xfFf9976782d46CC05630D1f6eBAb18b2324d6B14',
+      18,
+      'WETH',
+      'Wrapped Ether'
+    );
+  }
   const wallet = new Wallet(pk, provider);
   const amount = Number(inputAmount);
-
   const [TokenIn, TokenOut] =
-    saleType === 'Buy' ? [token, WETH9[networkId]] : [WETH9[networkId], token];
+    saleType === 'Buy' ? [token, weth] : [weth, token];
 
   try {
     let isApproved = await aggTokenApproval(TokenOut, amount, wallet);

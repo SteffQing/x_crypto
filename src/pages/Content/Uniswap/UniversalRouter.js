@@ -93,10 +93,10 @@ async function executeTrade(trade, walletAddress) {
     to: SWAP_ROUTER_ADDRESS,
     value: methodParameters.value,
     from: walletAddress,
-    maxFeePerGas: maxFeePerGas,
-    maxPriorityFeePerGas: maxPriorityFeePerGas,
-    // maxFeePerGas: MAX_FEE_PER_GAS,
-    // maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
+    // maxFeePerGas: maxFeePerGas,
+    // maxPriorityFeePerGas: maxPriorityFeePerGas,
+    maxFeePerGas: MAX_FEE_PER_GAS,
+    maxPriorityFeePerGas: MAX_PRIORITY_FEE_PER_GAS,
     gasLimit: 3e7,
   };
 

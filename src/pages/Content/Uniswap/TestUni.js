@@ -5,7 +5,7 @@ const swap = require('./TestUniV3');
     let tokenData = {
       address: '0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984',
       decimals: 18,
-      networkId: 5,
+      networkId: 11155111,
       name: 'Uniswap',
       symbol: 'UNI',
     };
