@@ -1,9 +1,14 @@
 import {
   MS_GET_ACCOUNT_INFO,
   MS_GET_TOKEN_INFO,
+  MS_GET_1INCH,
   TWITTER_URL,
 } from '../../../utils/constant';
-import { getAccountInfo, getTokenInfo } from '../../apis/serverAPI';
+import {
+  getAccountInfo,
+  getTokenInfo,
+  swapEndpoint,
+} from '../../apis/serverAPI';
 
 console.log('background');
 let messageQueue = [];
@@ -13,6 +18,19 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.action === MS_GET_TOKEN_INFO) {
     getTokenInfo(message.cashtags)
+      .then((infos) => {
+        sendResponse(infos);
+      })
+      .catch((error) => {
+        console.error('background:', error);
+        sendResponse([]);
+      });
+
+    return true;
+  }
+
+  if (message.action === MS_GET_1INCH) {
+    swapEndpoint(message.endpoint)
       .then((infos) => {
         sendResponse(infos);
       })

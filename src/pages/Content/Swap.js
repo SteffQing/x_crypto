@@ -1,6 +1,6 @@
 const { CLASS_FOR_PURCHASE, TWITTER_URL } = require('../../../utils/constant');
 const { createSpan, createLink } = require('./CreateElements');
-// const swap = require()
+const swap = require('./Inch/swap');
 
 const colors = [
   '2dcoff',
@@ -70,6 +70,13 @@ function Purchase(newDiv, token, account) {
       event.stopPropagation();
       console.log('button clicked is: ', buttons[i], buttonNode.innerText);
       console.log(token, 'Node', account);
+      swap(token, buttonNode.innerText, account)
+        .then((res) => {
+          console.log('swap res: ', res);
+        })
+        .catch((err) => {
+          console.log('swap err: ', err);
+        });
     });
     newDiv.appendChild(buttonNode);
   }

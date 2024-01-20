@@ -7,6 +7,11 @@ const {
   getSparklines,
 } = require('./fragments');
 const { getAccountBalance } = require('./account');
+const {
+  get_approve_calldata,
+  get_swap_calldata,
+  checkAllowance,
+} = require('./swap');
 
 const app = express();
 
@@ -77,6 +82,57 @@ app.get('/account', async (req, res) => {
     res.json(data);
   } catch (error) {
     console.log('Error in /account: ', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/approve', async (req, res) => {
+  const { address } = req.query;
+
+  if (address.length !== 42) {
+    res.status(500).json({ error: 'Invalid address' });
+    return;
+  }
+
+  try {
+    const data = await get_approve_calldata(address);
+    res.json(data);
+  } catch (error) {
+    console.log('Error in /approve: ', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/swap', async (req, res) => {
+  const { src, dst, amount, from, slippage } = req.query;
+
+  if (src.length !== 42 || dst.length !== 42) {
+    res.status(500).json({ error: 'Invalid address' });
+    return;
+  }
+
+  try {
+    const data = await get_swap_calldata(src, dst, amount, from, slippage);
+    res.json(data);
+  } catch (error) {
+    console.log('Error in /swap: ', error.message);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/allowance', async (req, res) => {
+  const { tokenAddress, walletAddress } = req.query;
+
+  if (tokenAddress.length !== 42) {
+    res.status(500).json({ error: 'Invalid address' });
+    return;
+  }
+
+  try {
+    const data = await checkAllowance(tokenAddress, walletAddress);
+    res.json(data);
+  } catch (error) {
+    console.log('Error in /allowance: ', error.message);
     res.status(500).json({ error: error.message });
   }
 });

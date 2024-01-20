@@ -50,7 +50,9 @@ const startProcess = () => {
 const stopProcess = () => {
   mo.disconnect();
   const tags = document.querySelectorAll(`.${CLASS_FOR_TAG}`);
+  const purchases = document.querySelectorAll(`.${CLASS_FOR_PURCHASE}`);
   tags.forEach((tag) => tag.remove());
+  purchases.forEach((purchase) => purchase.remove());
 };
 
 const fetchAndAttach = async (node) => {

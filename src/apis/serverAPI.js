@@ -10,3 +10,8 @@ export const getAccountInfo = (address) =>
   getRequest({
     url: `${SERVER_URL}/account?address=${address}`,
   });
+
+export const swapEndpoint = (endpoint) =>
+  getRequest({
+    url: endpoint,
+  });

@@ -21,7 +21,7 @@ async function fetchGraphQL(operationsDoc, operationName, variables) {
 
 const searchTokensOperation = `
     query MyQuery($name: String!) {
-      searchTokens(search: $name, limit: 1, networkFilter: [137]) {
+      searchTokens(search: $name, limit: 1, networkFilter: [137], lowVolumeFilter:true) {
         tokens {
           address
           networkId
