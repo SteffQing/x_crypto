@@ -145,7 +145,7 @@ function attachInfoTag(node) {
         const newDiv = createInfo(matchedTag);
         const firstChild = selectedTweetTag.firstChild;
         selectedTweetTag.insertBefore(newDiv, firstChild);
-        attachPurchaseTag(selectedTweetTag);
+        attachPurchaseTag(selectedTweetTag, matchedTag);
         cashtag_span.addEventListener('mouseover', () => {
           const recentTag = selectedTweetTag.querySelector(`.${CLASS_FOR_TAG}`);
           if (recentTag) {
@@ -153,14 +153,14 @@ function attachInfoTag(node) {
           }
           const _firstChild = selectedTweetTag.firstChild;
           selectedTweetTag.insertBefore(newDiv, _firstChild);
-          attachPurchaseTag(selectedTweetTag);
+          attachPurchaseTag(selectedTweetTag, matchedTag);
         });
       }
     }
   }
 }
 
-function attachPurchaseTag(tweetTextNode) {
+function attachPurchaseTag(tweetTextNode, tag) {
   if (!account) {
     return;
   }
@@ -169,7 +169,8 @@ function attachPurchaseTag(tweetTextNode) {
   if (checkLastCTA) {
     checkLastCTA.remove();
   }
-  const newDiv = createPurchase(account);
+  let token = { address: tag.address, decimals: tag.decimals };
+  const newDiv = createPurchase(account, token);
   parent.insertBefore(newDiv, parent.lastChild);
 }
 
@@ -216,9 +217,7 @@ function createInfo(tokenInfo) {
   // Address and Link
   const network = Networks.find((network) => network.id === networkId).name;
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
-  const addressLink = createLink(
-    `https://www.defined.fi/${network}/${address}`
-  );
+  const addressLink = createLink(`https://polygonscan.com/token/${address}`);
   const addressNode = createSpan(addressShort);
   addressLink.appendChild(addressNode);
 

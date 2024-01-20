@@ -1,5 +1,6 @@
 const { CLASS_FOR_PURCHASE, TWITTER_URL } = require('../../../utils/constant');
 const { createSpan, createLink } = require('./CreateElements');
+// const swap = require()
 
 const colors = [
   '2dcoff',
@@ -8,13 +9,13 @@ const colors = [
   ['68cbfa', '2896c2', '45b1df'],
 ];
 let trade = 'Buy';
-export function createPurchase(account) {
+export function createPurchase(account, token) {
   const newDiv = document.createElement('div');
   newDiv.classList.add(CLASS_FOR_PURCHASE);
 
   newDiv.appendChild(WalletSpan(account.account));
   newDiv.appendChild(BuySellSpan(newDiv));
-  Purchase(newDiv);
+  Purchase(newDiv, token, account);
 
   return newDiv;
 }
@@ -57,7 +58,7 @@ function BuySellSpan(newDiv) {
   return buySellNode;
 }
 
-function Purchase(newDiv) {
+function Purchase(newDiv, token, account) {
   const buttons = ['X1', 'X2', 'Max'];
 
   for (let i = 0; i < 3; i++) {
@@ -67,7 +68,8 @@ function Purchase(newDiv) {
     buttonNode.style.borderColor = `#${colors[2][i]}`;
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
-      console.log('button clicked is: ', buttons[i]);
+      console.log('button clicked is: ', buttons[i], buttonNode.innerText);
+      console.log(token, 'Node', account);
     });
     newDiv.appendChild(buttonNode);
   }

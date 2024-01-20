@@ -26,6 +26,7 @@ const searchTokensOperation = `
           address
           networkId
           name
+          decimals
           symbol
           imageThumbUrl
           price
