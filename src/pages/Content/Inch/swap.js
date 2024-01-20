@@ -41,14 +41,14 @@ async function signAndSendTransaction(transaction, privateKey, address) {
 
   let signer = new ethers.Wallet(privateKey, provider);
   console.log(transaction);
-  //   try {
-  let tx = await signer.sendTransaction(transaction);
-  await tx.wait();
+  try {
+    let tx = await signer.sendTransaction(transaction);
+    await tx.wait();
 
-  return { hash: tx.hash, status: 'ok' };
-  //   } catch {
-  //     return { status: 'error' };
-  //   }
+    return { hash: tx.hash, status: 'ok' };
+  } catch {
+    return { status: 'error' };
+  }
 }
 
 async function swap(token, trade, _from, slippage = '1') {
