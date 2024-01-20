@@ -35,15 +35,20 @@ async function signAndSendTransaction(transaction, privateKey, address) {
   transaction.value = BigNumber.from(transaction.value);
   transaction.chainId = CHAIN_ID;
 
-  let signer = new ethers.Wallet(privateKey, provider);
-  try {
-    let tx = await signer.sendTransaction(transaction);
-    await tx.wait();
-
-    return { hash: tx.hash, status: 'ok' };
-  } catch {
-    return { status: 'error' };
+  if (transaction.gas) {
+    delete transaction.gas;
   }
+
+  let signer = new ethers.Wallet(privateKey, provider);
+  console.log(transaction);
+  //   try {
+  let tx = await signer.sendTransaction(transaction);
+  await tx.wait();
+
+  return { hash: tx.hash, status: 'ok' };
+  //   } catch {
+  //     return { status: 'error' };
+  //   }
 }
 
 async function swap(token, trade, _from, slippage = '1') {
@@ -92,7 +97,7 @@ async function swap(token, trade, _from, slippage = '1') {
   });
   let swap_calldata = await swapEndpoint(swap_calldata_url);
   let hash = await signAndSendTransaction(
-    swap_calldata,
+    swap_calldata.tx,
     _from.privateKey,
     from_address
   );

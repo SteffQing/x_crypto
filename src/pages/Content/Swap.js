@@ -68,8 +68,6 @@ function Purchase(newDiv, token, account) {
     buttonNode.style.borderColor = `#${colors[2][i]}`;
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
-      console.log('button clicked is: ', buttons[i], buttonNode.innerText);
-      console.log(token, 'Node', account);
       swap(token, buttonNode.innerText, account)
         .then((res) => {
           console.log('swap hash: ', res);
