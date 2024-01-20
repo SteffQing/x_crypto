@@ -41,8 +41,16 @@ async function get_approve_calldata(token_address) {
   });
 
   let result = await fetch(url, config)
-    .then((response) => response.json())
-    .catch((err) => console.log(err));
+    .then((response) => {
+      if (response.status >= 400) {
+        return { status: 'error', message: response.statusText };
+      }
+      return response.json();
+    })
+    .catch((err) => {
+      console.log(err);
+      return { status: 'error', message: err };
+    });
 
   console.log(result, 'server result');
   return result;

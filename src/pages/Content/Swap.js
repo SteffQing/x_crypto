@@ -72,7 +72,7 @@ function Purchase(newDiv, token, account) {
       console.log(token, 'Node', account);
       swap(token, buttonNode.innerText, account)
         .then((res) => {
-          console.log('swap res: ', res);
+          console.log('swap hash: ', res);
         })
         .catch((err) => {
           console.log('swap err: ', err);

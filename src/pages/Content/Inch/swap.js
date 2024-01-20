@@ -4,7 +4,7 @@ const {
   checkAllowance,
 } = require('./utils');
 const { swapEndpoint } = require('../../../apis/serverAPI');
-const { ethers } = require('ethers');
+const { ethers, BigNumber } = require('ethers');
 
 let CHAIN_ID = 137;
 let ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
@@ -20,30 +20,26 @@ let provider = new ethers.providers.JsonRpcProvider(provider_url);
 
 async function estimate_gas(transaction) {
   try {
-    let gas = await provider.estimateGas(transaction);
-    return gas.toNumber();
+    return await provider.estimateGas(transaction);
   } catch {
-    return 2000000;
+    return BigNumber.from(2000000);
   }
 }
 
 async function signAndSendTransaction(transaction, privateKey, address) {
-  console.log(transaction, 'TX1');
   let from_address = transaction.from || address;
-  transaction['nonce'] = await provider.getTransactionCount(address);
-  transaction['from'] = from_address;
-  transaction['gas'] = transaction.gas || (await estimate_gas(transaction));
-  transaction['to'] = transaction['to'];
-  transaction['gasPrice'] = Number(transaction['gasPrice']);
-  transaction['value'] = Number(transaction['value']);
-  transaction['chainId'] = CHAIN_ID;
-  console.log(transaction, 'TX2');
+  transaction.nonce = await provider.getTransactionCount(address);
+  transaction.from = from_address;
+  transaction.gasLimit = await estimate_gas(transaction);
+  transaction.gasPrice = BigNumber.from(transaction.gasPrice);
+  transaction.value = BigNumber.from(transaction.value);
+  transaction.chainId = CHAIN_ID;
 
   let signer = new ethers.Wallet(privateKey, provider);
   try {
-    let signed_tx = await signer.signTransaction(transaction);
-    let tx = await signer.sendTransaction(signed_tx);
+    let tx = await signer.sendTransaction(transaction);
     await tx.wait();
+
     return { hash: tx.hash, status: 'ok' };
   } catch {
     return { status: 'error' };
@@ -64,20 +60,44 @@ async function swap(token, trade, _from, slippage = '1') {
   if (type !== 'Buy') {
     let allowance_url = checkAllowance(token.address, from_address);
     let { allowance } = await swapEndpoint(allowance_url);
-    console.log('allowance: ', allowance);
     if (Number(allowance) < Number(amount)) {
       let approve_calldata_url = await get_approve_calldata(token.address);
-      console.log(approve_calldata_url, 'APPROVE URL');
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          console.log('1 second delay to bypass defined limits');
+          resolve();
+        }, 1000);
+      });
       let approve_calldata = await swapEndpoint(approve_calldata_url);
-      console.log(approve_calldata, 'APPROVE CALLDATA');
       let hash = await signAndSendTransaction(
         approve_calldata,
         _from.privateKey,
         from_address
       );
-      console.log(hash.hash, 'HASH');
+      console.log(hash.hash, 'approve HASH');
     }
   }
+  let swap_calldata_url = await get_swap_calldata(
+    src,
+    dst,
+    amount,
+    from_address,
+    slippage
+  );
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('1 second delay to bypass defined limits');
+      resolve();
+    }, 1000);
+  });
+  let swap_calldata = await swapEndpoint(swap_calldata_url);
+  let hash = await signAndSendTransaction(
+    swap_calldata,
+    _from.privateKey,
+    from_address
+  );
+  console.log(hash.hash, 'swap HASH');
+  return hash.hash;
 }
 
 module.exports = swap;
