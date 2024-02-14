@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Trading Xtension",
+  "name": "xTrade Xtension",
   "description": "Highlight crypto tokens info on Twitter",
   "version": "0.0.6",
   "permissions": ["storage", "webNavigation", "tabs"],

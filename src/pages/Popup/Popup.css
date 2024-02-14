@@ -159,3 +159,29 @@
 .setting {
   min-width: 30px;
 }
+
+.slippage {
+  color: #fff;
+}
+
+.slippage__input {
+  width: 100%;
+  position: relative;
+  max-width: 200px;
+}
+
+.slippage__input__disbled {
+  max-width: 40px;
+}
+
+.slippage__input::after {
+  position: absolute;
+  content: '%';
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0.5rem;
+}
+
+.buy_values {
+  margin: 1.25rem 0;
+}
