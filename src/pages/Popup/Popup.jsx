@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './Popup.css';
 import { STORAGE_KEY, ACCOUNT_KEY, TWITTER_URL } from '../../../utils/constant';
 import SwitchBtn from '../../components/SwitchBtn';
+import Copy from '../../components/Copy';
+import Settings from '../../components/Settings';
 import { Wallet } from 'ethers';
 
 const Popup = () => {
@@ -49,8 +51,18 @@ const Popup = () => {
   return (
     <main className="container">
       <header className="header">
-        <h1 className="c-white fs-xl">{`Trading Xtension`}</h1>
-        <h1 className="c-white fs-md">{`The Chrome extension for DeFi in Twitter`}</h1>
+        <aside className="header_content">
+          <img
+            src="./main-img.png"
+            alt="xTrade Logo"
+            width="100px"
+            height="100px"
+          />
+          <div className="header_text">
+            <h1 className="c-white fs-xl">{`Trading Xtension`}</h1>
+            <h3 className="c-white fs-md">{`The Chrome extension for DeFi on X`}</h3>
+          </div>
+        </aside>
       </header>
 
       <section className="section">
@@ -69,21 +81,27 @@ const Popup = () => {
             <div className="warning">{err}</div>
           </div>
         ) : (
-          <div>
-            <div className="c-white fs-md">{`Your account`}</div>
-
-            <a
-              className="c-white fs-md"
-              href={TWITTER_URL + pk.account}
-              target="_blank"
-              rel="noreferrer"
-            >
-              {`${pk.account.substring(0, 4)}...${pk.account.slice(-3)}`}
-            </a>
+          <div className="wallet_setting">
+            <div className="wallet">
+              <a
+                className="fs-md"
+                href={TWITTER_URL + pk.account}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {`${pk.account.substring(0, 7)}...${pk.account.slice(-5)}`}
+              </a>
+              <Copy />
+            </div>
+            <div className="setting">
+              <a href="/settings">
+                <Settings />
+              </a>
+            </div>
           </div>
         )}
         {isViewStat !== null && (
-          <div onClick={() => onClickSwitch()} className="c-white fs-md">
+          <div onClick={() => onClickSwitch()} className="c-white fs-md m-auto">
             {`Turn ${isViewStat ? 'Off' : 'On'} Widget`}{' '}
             <SwitchBtn isChecked={isViewStat} />
           </div>

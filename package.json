@@ -1,6 +1,6 @@
 {
   "name": "trading_xtension",
-  "description": "Highlight crypto tokens info on Twitter",
+  "description": "Highlight crypto tokens on Twitter",
   "version": "1.0.0",
   "scripts": {
     "build": "node utils/build.js",
