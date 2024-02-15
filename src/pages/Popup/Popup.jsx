@@ -94,7 +94,7 @@ const Popup = () => {
               <Copy />
             </div>
             <div className="setting">
-              <a href="/settings">
+              <a href="/settings.html">
                 <Settings />
               </a>
             </div>
