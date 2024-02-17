@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import './Settings.css';
 // import { STORAGE_KEY, ACCOUNT_KEY } from '../../../utils/constant';
 
-import { Input } from '../../components/Input';
+import Input from '../../components/Input';
 import { Button } from '../../components/Button';
 
 const DEFAULT_SLIPPAGES = [0.5, 1, 3];
@@ -44,7 +44,6 @@ const Settings = () => {
               value={slippage}
               onChange={(e) => setSlippage(Number(e.target.value))}
               className="slippage__input"
-              aria-controls=""
             />
             <div className="disabled_inputs">
               {DEFAULT_SLIPPAGES.map((value) => (
