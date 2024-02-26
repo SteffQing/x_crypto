@@ -159,3 +159,55 @@
 .setting {
   min-width: 30px;
 }
+
+/* Settings */
+.header_settings {
+  background-image: url('../../assets/Settings_bg.png');
+}
+.slippage {
+  color: #fff;
+  display: flex;
+  gap: 0.6rem;
+}
+
+.slippage h2 {
+  margin-bottom: 1rem;
+}
+
+.slippage input {
+  padding: 12px;
+  border-radius: 7px;
+}
+
+.slippage__input {
+  width: 100%;
+  position: relative;
+  max-width: 150px;
+}
+
+.disabled_inputs {
+  display: flex;
+  gap: 0.2rem;
+}
+
+.slippage__input__disbled {
+  max-width: 40px;
+}
+
+.slippage__input::after {
+  position: absolute;
+  content: '%';
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0.5rem;
+}
+
+.buy_values {
+  margin: 1.25rem 0;
+}
+
+.buy_values__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
