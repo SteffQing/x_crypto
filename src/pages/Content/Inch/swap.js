@@ -11,7 +11,7 @@ let ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
 let amountObj = {
   X1: '0.1',
   X2: '0.2',
-  Max: '0.3',
+  X3: '0.3',
 };
 
 let provider_url =

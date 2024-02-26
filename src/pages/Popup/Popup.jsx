@@ -5,7 +5,7 @@ import {
   ACCOUNT_KEY,
   SETTINGS_KEY,
 } from '../../../utils/constant';
-import { decrypt, encrypt } from '../../../utils/hash';
+// import { decrypt, encrypt } from '../../../utils/hash';
 import { Wallet } from 'ethers';
 import HomePage from './Homepage';
 import Settings from './Settings';
@@ -31,9 +31,9 @@ const Popup = () => {
   };
   const onChangePk = (e) => {
     let value = e.target.value;
-    console.log(value, 'Original');
-    let ddd = encrypt(value);
-    console.log(ddd, 'Encrypted');
+    // console.log(value, 'Original');
+    // let ddd = encrypt(value);
+    // console.log(ddd, 'Encrypted');
     if (value.length < 66) {
       setErr('Private Key must be 66 characters long');
     } else if (value.slice(0, 2) !== '0x') {

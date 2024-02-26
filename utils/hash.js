@@ -1,4 +1,4 @@
-const { createHmac } = require('node:crypto');
+const crypto = await import('node:crypto');
 const { config } = require('dotenv');
 
 config();
