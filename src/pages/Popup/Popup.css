@@ -163,43 +163,51 @@
 /* Settings */
 .header_settings {
   background-image: url('../../assets/Settings_bg.png');
+  height: 120px;
+  position: relative;
+}
+.back_arrow {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  cursor: pointer;
+}
+.header_content_settings {
+  margin-top: 15%;
+}
+.section_settings {
+  margin-top: 0;
 }
 .slippage {
   color: #fff;
   display: flex;
   gap: 0.6rem;
+  flex-direction: column;
 }
 
-.slippage h2 {
-  margin-bottom: 1rem;
-}
-
-.slippage input {
-  padding: 12px;
-  border-radius: 7px;
+.slippage__inputs {
+  display: flex;
+  gap: 0.65rem;
 }
 
 .slippage__input {
-  width: 100%;
   position: relative;
-  max-width: 150px;
+  width: 150px;
 }
 
 .disabled_inputs {
   display: flex;
-  gap: 0.2rem;
+  gap: 0.35rem;
 }
 
 .slippage__input__disbled {
-  max-width: 40px;
+  width: 40px;
 }
 
-.slippage__input::after {
-  position: absolute;
-  content: '%';
-  top: 50%;
-  transform: translateY(-50%);
-  right: 0.5rem;
+.slippage__input__disbled input {
+  padding: 4px 6px;
+  font-size: 0.75rem;
+  text-align: center;
 }
 
 .buy_values {
@@ -210,4 +218,53 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.type_handlers {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.type_handlers div {
+  display: flex;
+  align-items: center;
+}
+
+.buy_values_input {
+  display: flex;
+  gap: 1.5rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+#disabled_button {
+  background-color: rgba(32, 32, 32, 1);
+  color: #fff;
+  width: 120px;
+}
+
+.buy_values_input > div {
+  width: 100%;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+.buttons {
+  display: flex;
+  gap: 1rem;
+}
+#btn_2 {
+  color: #fff;
+  text-transform: none;
 }

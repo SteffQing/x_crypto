@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import './Popup.css';
-import { STORAGE_KEY, ACCOUNT_KEY } from '../../../utils/constant';
+import {
+  STORAGE_KEY,
+  ACCOUNT_KEY,
+  SETTINGS_KEY,
+} from '../../../utils/constant';
 import { Wallet } from 'ethers';
 import HomePage from './Homepage';
 import Settings from './Settings';
@@ -10,6 +14,13 @@ const Popup = () => {
   const [err, setErr] = useState('');
   const [isViewStat, setViewStat] = useState(false);
   const [pageView, setPageView] = useState(0);
+  const [slippage, setSlippage] = useState(0.5);
+  const [buyValue, setBuyValue] = useState({
+    x1: 10,
+    x2: 20,
+    x3: 30,
+    type: 'percent',
+  });
 
   const onClickSwitch = () => {
     setViewStat((prev) => {
@@ -31,6 +42,9 @@ const Popup = () => {
     }
   };
 
+  const saveSettings = () =>
+    chrome.storage.local.set({ [SETTINGS_KEY]: { buyValue, slippage } });
+
   useEffect(() => {
     chrome.storage.local.get(STORAGE_KEY).then((values) => {
       if (values.hasOwnProperty(STORAGE_KEY)) {
@@ -43,6 +57,13 @@ const Popup = () => {
     chrome.storage.local.get(ACCOUNT_KEY).then((values) => {
       if (values.hasOwnProperty(ACCOUNT_KEY)) {
         setPk(values[ACCOUNT_KEY]);
+      }
+    });
+    chrome.storage.local.get(SETTINGS_KEY).then((values) => {
+      if (values.hasOwnProperty(SETTINGS_KEY)) {
+        let { buyValue, slippage } = values[SETTINGS_KEY];
+        setBuyValue(buyValue);
+        setSlippage(slippage);
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -60,7 +81,13 @@ const Popup = () => {
           setPageView={setPageView}
         />
       ) : (
-        <Settings />
+        <Settings
+          setPageView={setPageView}
+          slippage={slippage}
+          setSlippage={setSlippage}
+          buyValue={buyValue}
+          setBuyValue={setBuyValue}
+        />
       )}
     </>
   );
