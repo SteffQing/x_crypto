@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Input, InputAdornment } from '../../components/Input';
 import { TinyButton, MainButton } from '../../components/Button';
 import Radio from '@mui/material/Radio';
@@ -24,6 +24,7 @@ const Settings = ({
       x3: 30,
       type: 'percent',
     });
+    saveSettings();
   };
 
   return (
