@@ -1,5 +1,10 @@
 import { MS_GET_ACCOUNT_INFO } from '../../../utils/constant';
-import { createSpan, createTable, mergeToDiv } from './CreateElements';
+import {
+  createHeader,
+  createSpan,
+  createTable,
+  mergeToDiv,
+} from './CreateElements';
 
 let accountMap = new Map();
 
@@ -124,22 +129,27 @@ function createInfo(accountInfo) {
   let { address, assets, totalBalanceUsd, totalCount } = accountInfo;
 
   // Portfolio header
-  const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
-  const addressNode = createSpan(`Wallet Address: ${addressShort}`);
-  const totalBalanceUsdNode = createSpan(totalBalanceUsd, true);
-  const assetValueNode = createSpan('Assets Value: ');
-  const UsdBalanceNode = mergeToDiv(assetValueNode, totalBalanceUsdNode);
-  UsdBalanceNode.style.flexDirection = 'row';
-  const totalCountNode = createSpan(`Total Assets: 🔄️${totalCount}`);
+  const BalUSD = createHeader(`$${totalBalanceUsd}`);
+  const assetValue = createSpan('Assets Value');
+  const assetValueNode = mergeToDiv(BalUSD, assetValue);
 
-  const headerNode = mergeToDiv(addressNode, totalCountNode, UsdBalanceNode);
+  const TotalCount = createHeader(`${totalCount} Tokens`);
+  const totalAssets = createSpan(`Total Assets`);
+  const totalCountNode = mergeToDiv(TotalCount, totalAssets);
+
+  const topHeaderNode = mergeToDiv(assetValueNode, totalCountNode);
+  const lineSpan = createSpan('');
+  lineSpan.classList.add('line');
+
+  const addressShort = `${address.substring(0, 7)}...${address.slice(-5)} `;
+  const addressNode = createSpan(addressShort);
+  addressNode.style.color = 'rgba(72, 154, 255, 1)';
+
+  const headerNode = mergeToDiv(topHeaderNode, lineSpan, addressNode);
   headerNode.classList.add('header');
-  headerNode.style.alignItems = 'flex-start';
 
   // Portfolio table
-  console.log('Table start');
   const table = createTable(assets);
-  console.log('Table end');
   table.classList.add('table');
 
   newDiv.appendChild(headerNode);
