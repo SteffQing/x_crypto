@@ -68,6 +68,8 @@ const Popup = () => {
         let { buyValue, slippage } = values[SETTINGS_KEY];
         setBuyValue(buyValue);
         setSlippage(slippage);
+      } else {
+        chrome.storage.local.set({ [SETTINGS_KEY]: { buyValue, slippage } });
       }
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps

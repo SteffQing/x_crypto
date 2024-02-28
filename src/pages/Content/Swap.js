@@ -3,13 +3,13 @@ const { createSpan, createLink } = require('./CreateElements');
 const swap = require('./Inch/swap');
 
 let trade = 'Buy';
-export function createPurchase(account, token) {
+export function createPurchase(account, token, settings) {
   const newDiv = document.createElement('div');
   newDiv.classList.add(CLASS_FOR_PURCHASE);
 
   newDiv.appendChild(WalletSpan(account.account));
   newDiv.appendChild(BuySellSpan(newDiv));
-  Purchase(newDiv, token, account);
+  Purchase(newDiv, token, account, settings);
 
   return newDiv;
 }
@@ -44,7 +44,7 @@ function BuySellSpan(newDiv) {
   return buySellNode;
 }
 
-function Purchase(newDiv, token, account) {
+function Purchase(newDiv, token, account, settings) {
   const buttons = ['X1', 'X2', 'X3'];
 
   for (let i = 0; i < 3; i++) {
@@ -53,7 +53,7 @@ function Purchase(newDiv, token, account) {
     buttonNode.classList.add('swap_button');
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
-      swap(token, buttonNode.innerText, account)
+      swap(token, buttonNode.innerText, account, settings)
         .then((res) => {
           console.log('swap hash: ', res);
         })

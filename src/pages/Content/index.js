@@ -6,6 +6,7 @@ import {
   CLASS_FOR_TAG,
   MS_GET_TOKEN_INFO,
   STORAGE_KEY,
+  SETTINGS_KEY,
 } from '../../../utils/constant';
 import { ChartModal } from './Chart';
 import { Networks } from './Networks';
@@ -23,6 +24,7 @@ const dataMap = new Map();
 const fontColor = '#888';
 
 let account = null;
+let settings = null;
 
 const onMutation = (mutations) => {
   for (const { addedNodes } of mutations) {
@@ -172,7 +174,8 @@ function attachPurchaseTag(tweetTextNode, tag) {
     checkLastCTA.remove();
   }
   let token = { address: tag.address, decimals: tag.decimals };
-  const newDiv = createPurchase(account, token);
+  console.log(settings, 'View Settings');
+  const newDiv = createPurchase(account, token, settings);
   parent.insertBefore(newDiv, parent.lastChild);
 }
 
@@ -278,6 +281,12 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
       } else {
         console.log('remove portfolio');
         removePortfolio();
+      }
+    }
+    if (key === SETTINGS_KEY) {
+      const newValue = changes[key].newValue;
+      if (newValue) {
+        settings = newValue;
       }
     }
   }
