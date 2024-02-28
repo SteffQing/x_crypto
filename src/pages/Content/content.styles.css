@@ -43,7 +43,7 @@
 .primaryColumn .header {
   width: 100%;
   flex-direction: column;
-  padding: 16px;
+  padding: 16px 0;
   background-color: rgba(17, 17, 17, 1);
   border-radius: 10px;
   align-items: start !important;
@@ -51,7 +51,7 @@
 }
 .primaryColumn .header .topHeader {
   gap: 60px !important;
-  padding: 0 16px;
+  padding: 0 32px;
 }
 .primaryColumn .header .topHeader > div {
   display: flex;
@@ -73,17 +73,16 @@
   font-optical-sizing: auto;
 }
 .primaryColumn .line {
-  width: 100%;
+  width: 90%;
   height: 1px;
   display: block;
   background-color: rgba(40, 40, 40, 1);
-  margin: 1rem 0;
+  margin: 1rem auto;
 }
 .primaryColumn .table {
-  margin-top: 1rem;
   width: 100%;
   background-color: rgba(17, 17, 17, 1);
-  margin: 0.4rem 0;
+  margin: 1rem 0;
   padding: 1rem 2rem;
   border-radius: 10px;
   display: flex;

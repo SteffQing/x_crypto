@@ -106,6 +106,7 @@ function attachPortfolio(address, main) {
   body.classList.remove('loading');
   const sideBar = document.querySelector("[data-testid='sidebarColumn']");
   const accountInfo = accountMap.get(address);
+  console.log(main, 'Main');
   const parent = main.parentNode;
   let newDiv = null;
   if (!accountInfo) {
@@ -146,7 +147,7 @@ function createInfo(accountInfo) {
   const addressShort = `${address.substring(0, 7)}...${address.slice(-5)} `;
   const addressNode = createSpan(addressShort);
   addressNode.style.color = 'rgba(72, 154, 255, 1)';
-  addressNode.style.paddingLeft = '16px';
+  addressNode.style.paddingLeft = '32px';
 
   const headerNode = mergeToDiv(topHeaderNode, lineSpan, addressNode);
   headerNode.classList.add('header');
