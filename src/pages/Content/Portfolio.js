@@ -108,6 +108,7 @@ function attachPortfolio(address, main) {
   const accountInfo = accountMap.get(address);
   console.log(main, 'Main');
   const parent = main.parentNode;
+  console.log(parent, 'Parent');
   let newDiv = null;
   if (!accountInfo) {
     newDiv = createNullAccount(address);
@@ -119,6 +120,7 @@ function attachPortfolio(address, main) {
   if (sideBar) {
     parent.insertBefore(newDiv, sideBar);
   } else parent.appendChild(newDiv);
+  // fullWidthDiv = body.querySelector("[role='main']");
 }
 
 function createInfo(accountInfo) {
