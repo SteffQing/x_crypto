@@ -96,9 +96,11 @@ function mergeToDiv(element1, element2, element3 = null) {
   return div;
 }
 
-function createHeader(text) {
+function createHeader(text, decimals = false) {
   const h1 = document.createElement('h1');
   h1.classList.add('header_text');
+  const { subscript, value } = stripPrice(text);
+  h1.textContent = decimals === true ? value : text;
   return h1;
 }
 

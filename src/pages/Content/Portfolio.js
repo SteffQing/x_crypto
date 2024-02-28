@@ -129,21 +129,24 @@ function createInfo(accountInfo) {
   let { address, assets, totalBalanceUsd, totalCount } = accountInfo;
 
   // Portfolio header
-  const BalUSD = createHeader(`$${totalBalanceUsd}`);
+  const BalUSD = createHeader(totalBalanceUsd, true);
   const assetValue = createSpan('Assets Value');
   const assetValueNode = mergeToDiv(BalUSD, assetValue);
 
   const TotalCount = createHeader(`${totalCount} Tokens`);
+  TotalCount.style.fontSize = '32px';
   const totalAssets = createSpan(`Total Assets`);
   const totalCountNode = mergeToDiv(TotalCount, totalAssets);
 
   const topHeaderNode = mergeToDiv(assetValueNode, totalCountNode);
+  topHeaderNode.classList.add('topHeader');
   const lineSpan = createSpan('');
   lineSpan.classList.add('line');
 
   const addressShort = `${address.substring(0, 7)}...${address.slice(-5)} `;
   const addressNode = createSpan(addressShort);
   addressNode.style.color = 'rgba(72, 154, 255, 1)';
+  addressNode.style.paddingLeft = '16px';
 
   const headerNode = mergeToDiv(topHeaderNode, lineSpan, addressNode);
   headerNode.classList.add('header');
