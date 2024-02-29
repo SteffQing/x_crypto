@@ -5,14 +5,11 @@ const {
 } = require('./utils');
 const { swapEndpoint } = require('../../../apis/serverAPI');
 const { ethers, BigNumber } = require('ethers');
+const ERC20_ABI = require('../abi/erc20ABI.json');
 
 let CHAIN_ID = 137;
-let ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-let amountObj = {
-  X1: '0.1',
-  X2: '0.2',
-  X3: '0.3',
-};
+const ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
+const ETHER = { address: ETH, decimals: 18 };
 
 let provider_url =
   'https://polygon-mainnet.infura.io/v3/6ea08acb523d49fa969a0b53def4d5ed';
@@ -51,16 +48,41 @@ async function signAndSendTransaction(transaction, privateKey, address) {
   }
 }
 
-async function swap(token, trade, _from, slippage = '1') {
+async function processAmount(value, buyValue, from_address, token) {
+  let decimals = token.decimals;
+  let userBalance;
+  if (token.address === ETH) {
+    let balance = await provider.getBalance(from_address);
+    userBalance = ethers.utils.formatUnits(balance, 18);
+  } else {
+    let contract = new ethers.Contract(token.address, ERC20_ABI, provider);
+    let balance = await contract.balanceOf(from_address);
+    userBalance = ethers.utils.formatUnits(balance, decimals);
+  }
+  let amount = '0';
+  if (buyValue.type == 'number') {
+    if (value > userBalance) {
+      throw new Error('Insufficient Ether to process this transaction');
+    }
+    amount = ethers.utils.parseUnits(value, decimals);
+  } else {
+    let percent_amount = userBalance * (buyValue[value] / 100);
+    amount = ethers.utils.parseUnits(percent_amount.toString(), decimals);
+  }
+  return amount;
+}
+
+async function swap(token, trade, _from, settings) {
   let [type, value] = trade.split(' ');
+  let = { slippage, buyValue } = settings;
+
   let src = type === 'Buy' ? ETH : token.address;
   let dst = type === 'Buy' ? token.address : ETH;
   let from_address = _from.account;
 
   // Parse amount to wei
-  let amount = amountObj[value];
-  amount = ethers.utils.parseUnits(amount, token.decimals);
-  amount = amount.toString();
+  let Token = type === 'Buy' ? ETHER : token;
+  let amount = processAmount(value, buyValue, from_address, Token);
 
   if (type !== 'Buy') {
     let allowance_url = checkAllowance(token.address, from_address);
@@ -87,7 +109,7 @@ async function swap(token, trade, _from, slippage = '1') {
     dst,
     amount,
     from_address,
-    slippage
+    slippage.toString()
   );
   await new Promise((resolve) => {
     setTimeout(() => {

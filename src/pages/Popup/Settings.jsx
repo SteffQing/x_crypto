@@ -112,7 +112,11 @@ const Settings = ({
                   }
                   className="slippage__input"
                   id={value}
-                  endAdornment={<InputAdornment>%</InputAdornment>}
+                  endAdornment={
+                    <InputAdornment>
+                      {buyValue.type === 'percent' ? '%' : 'ETH'}
+                    </InputAdornment>
+                  }
                 />
               </div>
             ))}

@@ -165,7 +165,7 @@ function attachInfoTag(node) {
 }
 
 function attachPurchaseTag(tweetTextNode, tag) {
-  if (!account) {
+  if (!account || !settings) {
     return;
   }
   const parent = tweetTextNode.parentNode.parentNode;
@@ -174,7 +174,6 @@ function attachPurchaseTag(tweetTextNode, tag) {
     checkLastCTA.remove();
   }
   let token = { address: tag.address, decimals: tag.decimals };
-  console.log(settings, 'View Settings');
   const newDiv = createPurchase(account, token, settings);
   parent.insertBefore(newDiv, parent.lastChild);
 }
@@ -258,6 +257,14 @@ chrome.storage.local.get(ACCOUNT_KEY).then((values) => {
     }
   }
 });
+chrome.storage.local.get(SETTINGS_KEY).then((values) => {
+  if (values.hasOwnProperty(SETTINGS_KEY) && values[SETTINGS_KEY]) {
+    const value = values[SETTINGS_KEY];
+    if (value) {
+      settings = value;
+    }
+  }
+});
 
 chrome.storage.onChanged.addListener(function (changes, namespace) {
   console.log(changes, namespace);
@@ -275,11 +282,9 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
     if (key === ACCOUNT_KEY) {
       const newValue = changes[key].newValue;
       if (newValue.account) {
-        console.log('portfolio in');
         account = newValue;
         addPortfolio(newValue.account);
       } else {
-        console.log('remove portfolio');
         removePortfolio();
       }
     }

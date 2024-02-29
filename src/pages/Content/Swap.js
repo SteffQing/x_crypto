@@ -53,6 +53,7 @@ function Purchase(newDiv, token, account, settings) {
     buttonNode.classList.add('swap_button');
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
+      // console.log(settings, 'swap', account);
       swap(token, buttonNode.innerText, account, settings)
         .then((res) => {
           console.log('swap hash: ', res);
