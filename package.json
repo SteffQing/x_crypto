@@ -23,6 +23,7 @@
     "lightweight-charts": "^4.1.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "vercel": "^33.5.5",
     "viem": "^1.18.4",
     "wagmi": "^1.4.5"
   },

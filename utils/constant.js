@@ -2,7 +2,7 @@ export const STORAGE_KEY = 'x_defi-view';
 
 export const ACCOUNT_KEY = 'x_defi-view_account';
 
-export const SERVER_URL = `http://localhost:4000`;
+export const SERVER_URL = `https://trade-xtension.vercel.app`;
 
 export const MS_GET_TOKEN_INFO = 'GET_TOKEN_INFO';
 

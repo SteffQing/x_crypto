@@ -3,7 +3,7 @@ import { getRequest } from './httpAPI';
 
 export const getTokenInfo = (symbols) =>
   getRequest({
-    url: `${SERVER_URL}?symbols=${encodeURIComponent(symbols.join(','))}`,
+    url: `${SERVER_URL}/api?symbols=${encodeURIComponent(symbols.join(','))}`,
   });
 
 export const getAccountInfo = (address) =>

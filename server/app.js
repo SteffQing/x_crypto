@@ -17,7 +17,7 @@ const app = express();
 
 app.use(cors());
 
-app.get('/', async (req, res) => {
+app.get('/api', async (req, res) => {
   try {
     const { symbols } = req.query;
     let _symbols = symbols.split(',');
@@ -138,6 +138,8 @@ app.get('/allowance', async (req, res) => {
 });
 
 // Start the server
-app.listen(4000, () => {
-  console.log('Server started on port 4000');
-});
+// app.listen(4000, () => {
+//   console.log('Server started on port 4000');
+// });
+
+module.exports = app;
