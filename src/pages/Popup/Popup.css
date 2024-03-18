@@ -180,6 +180,7 @@ input {
 .header_settings {
   background-image: url('../../assets/Settings_bg.png');
   height: 100px;
+  position: relative;
 }
 
 .header_settings .header_content {
@@ -308,4 +309,12 @@ input {
 
 .reset_button {
   color: #fff !important;
+}
+
+.return_button {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  color: white;
+  cursor: pointer;
 }

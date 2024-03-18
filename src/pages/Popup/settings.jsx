@@ -8,6 +8,7 @@ import {
   Radio,
   RadioGroup,
 } from '@mui/material';
+import { ArrowLeftIcon } from '@radix-ui/react-icons';
 
 const DEFAULT_SLIPPAGES = [0.5, 1, 3];
 
@@ -18,11 +19,12 @@ export default function Settings({
   setSlippage,
   reset,
   saveSettings,
+  setView,
 }) {
-  console.log(buyValue, slippage);
   return (
     <main className="container">
       <header className="header header_settings">
+        <ArrowLeftIcon onClick={() => setView(0)} className="return_button" />
         <aside className="header_content">
           <div className="header_text">
             <h1 className="c-white fs-xl">{`Settings`}</h1>

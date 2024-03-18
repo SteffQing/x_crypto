@@ -56,7 +56,11 @@ export default function Homepage({
               >
                 {`${pk.account.substring(0, 7)}...${pk.account.slice(-5)}`}
               </a>
-              <Copy />
+              <Copy
+                onClick={() => {
+                  navigator.clipboard.writeText(pk.account);
+                }}
+              />
             </div>
             <div className="setting">
               <span onClick={() => setView(1)}>

@@ -96,6 +96,7 @@ const Popup = () => {
       setSlippage={setSlippage}
       reset={reset}
       saveSettings={saveSettings}
+      setView={setView}
     />
   );
 };
