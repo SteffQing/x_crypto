@@ -1,3 +1,4 @@
+import React from 'react';
 import { TWITTER_URL } from '../../../utils/constant';
 import SwitchBtn from '../../components/SwitchBtn';
 import Copy from '../../components/Copy';

@@ -2,7 +2,6 @@ import React from 'react';
 import './Popup';
 
 import Input from '../../components/Input';
-import { Button } from '../../components/Button';
 
 const DEFAULT_SLIPPAGES = [0.5, 1, 3];
 
