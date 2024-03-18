@@ -53,6 +53,7 @@ const Popup = () => {
   };
   const saveSettings = () => {
     chrome.storage.local.set({ [SETTINGS_KEY]: { slippage, buyValue } });
+    setView(0);
   };
 
   useEffect(() => {

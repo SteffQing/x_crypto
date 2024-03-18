@@ -128,14 +128,17 @@ input[type='number'] {
   font-weight: 500;
   cursor: pointer;
 }
-#input_pk {
-  width: 100%;
-  height: 40px;
+input {
+  border: 1px solid #272727;
   border-radius: 4px;
-  border: 1px solid #000;
+  padding: 12px;
   color: white;
   font-size: 0.875rem;
   font-weight: 500;
+}
+#input_pk {
+  width: 100%;
+  height: 40px;
   text-indent: 1rem;
   margin: 0.5rem 0;
 }
@@ -176,44 +179,86 @@ input[type='number'] {
 /* Settings Page */
 .header_settings {
   background-image: url('../../assets/Settings_bg.png');
+  height: 100px;
+}
+
+.header_settings .header_content {
+  margin-top: 15%;
+}
+
+.settings_section {
+  margin: 0;
 }
 
 .slippage {
   color: #fff;
   display: flex;
   gap: 0.6rem;
+  flex-direction: column;
 }
 
-.slippage h2 {
-  margin-bottom: 1rem;
+.slippage__inputs {
+  display: flex;
+  gap: 4px;
 }
 
-.slippage input {
-  padding: 12px;
+.settings_section input {
   border-radius: 7px;
+  padding: 7px 10px;
+  font-size: 0.875rem;
+}
+
+.input_adornment {
+  margin-right: 8px;
+}
+.input_adornment p {
+  color: #fff;
 }
 
 .slippage__input {
   width: 100%;
-  position: relative;
+  color: white !important;
   max-width: 150px;
+  border: 1px solid #272727;
+  border-radius: 4px;
+  overflow: hidden;
+  background-color: #111111;
 }
 
 .disabled_inputs {
   display: flex;
   gap: 0.2rem;
+  width: 100%;
 }
 
 .slippage__input__disbled {
-  max-width: 40px;
+  min-width: 40px !important;
+  width: 100%;
+  color: #ffffff4d !important;
+  border: 1px solid #272727 !important;
+  background-color: #111111 !important;
+  transition: all 300ms ease-in-out;
 }
 
-.slippage__input::after {
-  position: absolute;
-  content: '%';
-  top: 50%;
-  transform: translateY(-50%);
-  right: 0.5rem;
+.slippage__input__disbled:hover {
+  color: #fff !important;
+  border-color: #fff !important;
+  background-color: #000000 !important;
+}
+
+.type_handlers {
+  flex-direction: row !important;
+  gap: 6px;
+}
+
+.type_handlers span {
+  color: #fff !important;
+}
+
+.type_handlers span svg {
+  width: 0.8em;
+  height: 0.8em;
+  font-size: 1.4rem;
 }
 
 .buy_values {
@@ -224,4 +269,43 @@ input[type='number'] {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  color: #fff;
+  margin-bottom: 0.4rem;
+}
+
+.buy_values__content {
+  display: flex;
+  gap: 8px;
+  flex-direction: column;
+}
+.buy_value {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+.buy_value button {
+  width: 30%;
+}
+.buy_value div {
+  max-width: 70%;
+}
+
+.setting_buttons {
+  display: flex;
+  gap: 1rem;
+}
+
+.apply_button {
+  color: #000000 !important;
+  background-color: #fff !important;
+  transition: all 300ms ease-in-out !important;
+}
+
+.apply_button:hover {
+  color: #fff !important;
+  background-color: #000 !important;
+}
+
+.reset_button {
+  color: #fff !important;
 }

@@ -57,12 +57,7 @@ input,
 button,
 textarea,
 select {
-  appearance: none;
-  border: none;
   background: none;
-  padding: 0;
-  margin: 0;
-  outline: none;
 }
 
 /* Clear floated elements */
