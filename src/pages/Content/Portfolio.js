@@ -119,30 +119,38 @@ function createInfo(accountInfo) {
   const newDiv = document.createElement('div');
   newDiv.setAttribute('data-testid', 'primaryColumn');
   newDiv.classList.add('primaryColumn');
-  newDiv.style.fontFamily = 'TwitterChirp';
 
   let { address, assets, totalBalanceUsd, totalCount } = accountInfo;
 
   // Portfolio header
-  const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
-  const addressNode = createSpan(`Wallet Address: ${addressShort}`);
+  const addressShort = `${address.substring(0, 7)}...${address.slice(-5)}`;
   const totalBalanceUsdNode = createSpan(totalBalanceUsd, true);
-  const assetValueNode = createSpan('Assets Value: ');
-  const UsdBalanceNode = mergeToDiv(assetValueNode, totalBalanceUsdNode);
-  UsdBalanceNode.style.flexDirection = 'row';
-  const totalCountNode = createSpan(`Total Assets: 🔄️${totalCount}`);
+  totalBalanceUsdNode.classList.add('headerText', 'x1');
+  const assetValueNode = createSpan('Assets Value');
+  const UsdBalanceNode = mergeToDiv(totalBalanceUsdNode, assetValueNode);
 
-  const headerNode = mergeToDiv(addressNode, totalCountNode, UsdBalanceNode);
-  headerNode.classList.add('header');
-  headerNode.style.alignItems = 'flex-start';
+  const totalCountTokensNode = createSpan(`${totalCount} Token(s)`);
+  totalCountTokensNode.classList.add('headerText', 'x2');
+  const totalAssetsNode = createSpan('Total Assets');
+  const totalCountNode = mergeToDiv(totalCountTokensNode, totalAssetsNode);
+
+  const headerNode = mergeToDiv(UsdBalanceNode, totalCountNode);
+  headerNode.classList.add('headerNode');
+
+  const line = document.createElement('span');
+  line.classList.add('line');
+
+  const walletAddressNode = createSpan(addressShort);
+  walletAddressNode.classList.add('x3');
+
+  const portfolioHeader = mergeToDiv(headerNode, line, walletAddressNode);
+  portfolioHeader.classList.add('header');
 
   // Portfolio table
-  console.log('Table start');
   const table = createTable(assets);
-  console.log('Table end');
   table.classList.add('table');
 
-  newDiv.appendChild(headerNode);
+  newDiv.appendChild(portfolioHeader);
   newDiv.appendChild(table);
 
   return newDiv;
