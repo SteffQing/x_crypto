@@ -8,7 +8,6 @@ import {
   STORAGE_KEY,
 } from '../../../utils/constant';
 import { ChartModal } from './Chart';
-import { Networks } from './Networks';
 import {
   createImage,
   createLink,
@@ -186,7 +185,6 @@ function createInfo(tokenInfo) {
     priceChange,
     volume,
     address,
-    networkId,
     price,
     bar,
   } = tokenInfo;
@@ -217,7 +215,6 @@ function createInfo(tokenInfo) {
   viewChartNode.classList.add('pointer');
 
   // Address and Link
-  const network = Networks.find((network) => network.id === networkId).name;
   const addressShort = `⛓️${address.substring(0, 4)}...${address.slice(-3)}`;
   const addressLink = createLink(`https://polygonscan.com/token/${address}`);
   const addressNode = createSpan(addressShort);

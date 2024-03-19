@@ -25,6 +25,7 @@ function createLink(href) {
 }
 
 function createImage(url, symbol) {
+  console.log('createImage', url);
   const image = document.createElement('img');
   image.src = url;
   image.style.width = '16px';
@@ -44,19 +45,19 @@ function createSpan(text, bool = false, type = null) {
     if (!subscript) {
       if (type === 'BALANCE') {
         span.textContent = value;
-      } else span.textContent = `💲${value}`;
+      } else span.textContent = `$${value}`;
       return span;
     }
     if (Number(subscript) === -1) {
       if (type === 'BALANCE') {
         span.textContent = `0.${value}`;
-      } else span.textContent = `💲0.${value}`;
+      } else span.textContent = `$0.${value}`;
       return span;
     }
     if (Number(subscript) === 0) {
       if (type === 'BALANCE') {
         span.textContent = `0.0${value}`;
-      } else span.textContent = `💲0.0${value}`;
+      } else span.textContent = `$0.0${value}`;
       return span;
     }
     const subscriptNode = document.createElement('sub');
@@ -67,7 +68,7 @@ function createSpan(text, bool = false, type = null) {
     let zeroText = null;
     if (type === 'BALANCE') {
       zeroText = document.createTextNode('0.0');
-    } else zeroText = document.createTextNode('💲0.0');
+    } else zeroText = document.createTextNode('$0.0');
 
     // Append the parts to the container
     container.appendChild(zeroText);
