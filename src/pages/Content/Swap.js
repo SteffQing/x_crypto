@@ -14,15 +14,12 @@ export function createPurchase(account, token) {
   return newDiv;
 }
 
-function WalletSpan(address = '') {
+function WalletSpan(address) {
   const walletLink = createLink(TWITTER_URL + address);
   const walletNode = createSpan('Wallet');
   walletLink.appendChild(walletNode);
   walletLink.classList.add('trade_button');
-  walletLink.addEventListener('click', (event) => {
-    event.stopPropagation();
-    console.log('button clicked is: Wallet');
-  });
+  walletLink.style.color = 'white';
   return walletLink;
 }
 
@@ -30,6 +27,7 @@ function BuySellSpan(newDiv) {
   const buySellNode = createSpan('Buy ⚡ Sell');
   buySellNode.classList.add('trade_button');
   buySellNode.style.border = 'none';
+  buySellNode.style.backgroundColor = '#232323';
   buySellNode.addEventListener('click', (event) => {
     event.stopPropagation();
     const buttons = newDiv.querySelectorAll('.swap_button');
@@ -54,6 +52,7 @@ function Purchase(newDiv, token, account) {
   for (let i = 0; i < 3; i++) {
     const buttonNode = createSpan(`Buy ${buttons[i]}`);
     buttonNode.classList.add('trade_button');
+    buttonNode.classList.add('swap_button');
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
       swap(token, buttonNode.innerText, account)

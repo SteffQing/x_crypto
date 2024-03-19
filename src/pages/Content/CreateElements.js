@@ -25,9 +25,8 @@ function createLink(href) {
 }
 
 function createImage(url, symbol) {
-  console.log('createImage', url);
   const image = document.createElement('img');
-  image.src = url;
+  image.src = url ? url : ETHIcon;
   image.style.width = '16px';
   image.style.height = '16px';
   image.style.verticalAlign = 'middle';
@@ -156,3 +155,5 @@ function createTable(assets) {
 }
 
 export { createLink, createImage, createSpan, mergeToDiv, createTable };
+const ETHIcon =
+  'https://tokens-data.1inch.io/images/0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee.png';
