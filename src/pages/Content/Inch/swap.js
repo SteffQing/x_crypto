@@ -51,16 +51,51 @@ async function signAndSendTransaction(transaction, privateKey, address) {
   }
 }
 
-async function swap(token, trade, _from, slippage = '1') {
+async function getBalance(address, token) {
+  let balance = '0';
+  const abi = ['function balanceOf(address owner) view returns (uint256)'];
+  if (token !== ETH) {
+    let contract = new ethers.Contract(token, abi, provider);
+    balance = await contract.balanceOf(address);
+  } else {
+    balance = await provider.getBalance(address);
+  }
+  return Number(balance);
+}
+
+async function parse_data(token, trade, settings, from_address) {
   let [type, value] = trade.split(' ');
+  value = value.toLowerCase();
+  let { buyValue, slippage } = settings;
+  let _type = buyValue.type;
+  // Get src and dst addressess
   let src = type === 'Buy' ? ETH : token.address;
   let dst = type === 'Buy' ? token.address : ETH;
-  let from_address = _from.account;
+  // Get Balance of token to be sold
+  let balance = getBalance(from_address, src);
+  // Get amount to be used in this transaction
+  let amount = 0;
+  let _value = buyValue[value];
+  if (_type === 'percent') {
+    amount = balance * (_value / 100);
+  } else {
+    if (Number(_value) < balance) {
+      throw new Error('Insufficient balance to be used in this transaction');
+    }
+    amount = _value;
+  }
 
-  // Parse amount to wei
-  let amount = amountObj[value];
-  amount = ethers.utils.parseUnits(amount, token.decimals);
-  amount = amount.toString();
+  // Get actual amount to be used in this transaction
+  return { src, dst, slippage, amount: amount.toString() };
+}
+async function swap(token, trade, _from, settings) {
+  let from_address = _from.account;
+  let { src, dst, slippage, amount } = await parse_data(
+    token,
+    trade,
+    settings,
+    from_address
+  );
 
   if (type !== 'Buy') {
     let allowance_url = checkAllowance(token.address, from_address);
@@ -91,7 +126,7 @@ async function swap(token, trade, _from, slippage = '1') {
   );
   await new Promise((resolve) => {
     setTimeout(() => {
-      console.log('1 second delay to bypass defined limits');
+      console.log('1 second delay to bypass 2nd defined limits');
       resolve();
     }, 1000);
   });

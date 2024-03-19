@@ -1,4 +1,8 @@
-const { CLASS_FOR_PURCHASE, TWITTER_URL } = require('../../../utils/constant');
+const {
+  CLASS_FOR_PURCHASE,
+  TWITTER_URL,
+  SETTINGS_KEY,
+} = require('../../../utils/constant');
 const { createSpan, createLink } = require('./CreateElements');
 const swap = require('./Inch/swap');
 
@@ -55,16 +59,27 @@ function Purchase(newDiv, token, account) {
     buttonNode.classList.add('swap_button');
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
-      swap(token, buttonNode.innerText, account)
-        .then((res) => {
-          console.log('swap hash: ', res);
-        })
-        .catch((err) => {
-          console.log('swap err: ', err);
-        });
+      get_settings().then((settings) => {
+        console.log('settings', settings);
+        if (settings) {
+          swap(token, buttonNode.innerText, account, settings)
+            .then((res) => {
+              console.log('swap hash: ', res);
+            })
+            .catch((err) => {
+              console.log('swap err: ', err);
+            });
+        }
+      });
     });
     newDiv.appendChild(buttonNode);
   }
 }
 
-// Uniswap V2
+function get_settings() {
+  return chrome.storage.local.get(SETTINGS_KEY).then((values) => {
+    if (values.hasOwnProperty(SETTINGS_KEY) && values[SETTINGS_KEY]) {
+      return values[SETTINGS_KEY];
+    }
+  });
+}
