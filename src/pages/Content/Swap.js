@@ -1,3 +1,5 @@
+import { TradeModal } from './TradeModal';
+
 const {
   CLASS_FOR_PURCHASE,
   TWITTER_URL,
@@ -59,27 +61,51 @@ function Purchase(newDiv, token, account) {
     buttonNode.classList.add('swap_button');
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
-      get_settings().then((settings) => {
-        console.log('settings', settings);
-        if (settings) {
-          swap(token, buttonNode.innerText, account, settings)
-            .then((res) => {
-              console.log('swap hash: ', res);
-            })
-            .catch((err) => {
-              console.log('swap err: ', err);
-            });
-        }
-      });
+      openModal();
+      // get_settings().then((settings) => {
+      //   if (settings) {
+      //     swap(token, buttonNode.innerText, account, settings)
+      //       .then((res) => {
+      //         console.log('swap hash: ', res);
+      //       })
+      //       .catch((err) => {
+      //         console.log('swap err: ', err);
+      //       })
+      //       .finally(() => {
+      //         closeModal();
+      //       });
+      //   }
+      // });
     });
     newDiv.appendChild(buttonNode);
   }
 }
 
-function get_settings() {
+async function get_settings() {
   return chrome.storage.local.get(SETTINGS_KEY).then((values) => {
     if (values.hasOwnProperty(SETTINGS_KEY) && values[SETTINGS_KEY]) {
       return values[SETTINGS_KEY];
     }
   });
+}
+const modal_id = 'x_defi-trade-modal';
+function openModal() {
+  const Modal = TradeModal();
+  Modal.id = modal_id;
+  document.body.appendChild(Modal);
+}
+function updateModal(title, text) {
+  const Modal = document.getElementById(modal_id);
+  if (Modal) {
+    closeModal();
+    const newModal = TradeModal(title, text);
+    newModal.id = modal_id;
+    document.body.appendChild(newModal);
+  }
+}
+function closeModal() {
+  const Modal = document.getElementById(modal_id);
+  if (Modal) {
+    Modal.remove();
+  }
 }

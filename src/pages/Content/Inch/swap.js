@@ -42,11 +42,15 @@ async function signAndSendTransaction(transaction, privateKey, address) {
   let signer = new ethers.Wallet(privateKey, provider);
   console.log(transaction);
   try {
+    console.log('sending tx');
     let tx = await signer.sendTransaction(transaction);
+    console.log('sent tx');
     await tx.wait();
+    console.log('awaiting tx');
 
     return { hash: tx.hash, status: 'ok' };
-  } catch {
+  } catch (error) {
+    console.log('error', error);
     return { status: 'error' };
   }
 }
@@ -72,7 +76,7 @@ async function parse_data(token, trade, settings, from_address) {
   let src = type === 'Buy' ? ETH : token.address;
   let dst = type === 'Buy' ? token.address : ETH;
   // Get Balance of token to be sold
-  let balance = getBalance(from_address, src);
+  let balance = await getBalance(from_address, src);
   // Get amount to be used in this transaction
   let amount = 0;
   let _value = buyValue[value];
@@ -86,11 +90,11 @@ async function parse_data(token, trade, settings, from_address) {
   }
 
   // Get actual amount to be used in this transaction
-  return { src, dst, slippage, amount: amount.toString() };
+  return { src, dst, slippage, amount: amount.toString(), type };
 }
 async function swap(token, trade, _from, settings) {
   let from_address = _from.account;
-  let { src, dst, slippage, amount } = await parse_data(
+  let { src, dst, slippage, amount, type } = await parse_data(
     token,
     trade,
     settings,
@@ -131,6 +135,7 @@ async function swap(token, trade, _from, settings) {
     }, 1000);
   });
   let swap_calldata = await swapEndpoint(swap_calldata_url);
+  console.log(swap_calldata, 'swap calldata');
   let hash = await signAndSendTransaction(
     swap_calldata.tx,
     _from.privateKey,
