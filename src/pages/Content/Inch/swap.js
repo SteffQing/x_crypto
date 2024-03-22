@@ -8,11 +8,6 @@ const { ethers, BigNumber } = require('ethers');
 
 let CHAIN_ID = 137;
 let ETH = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee';
-let amountObj = {
-  X1: '0.1',
-  X2: '0.2',
-  Max: '0.3',
-};
 
 let provider_url =
   'https://polygon-mainnet.infura.io/v3/6ea08acb523d49fa969a0b53def4d5ed';
@@ -40,7 +35,6 @@ async function signAndSendTransaction(transaction, privateKey, address) {
   }
 
   let signer = new ethers.Wallet(privateKey, provider);
-  console.log(transaction);
   try {
     console.log('sending tx');
     let tx = await signer.sendTransaction(transaction);
@@ -48,10 +42,9 @@ async function signAndSendTransaction(transaction, privateKey, address) {
     await tx.wait();
     console.log('awaiting tx');
 
-    return { hash: tx.hash, status: 'ok' };
+    return tx.hash;
   } catch (error) {
-    console.log('error', error);
-    return { status: 'error' };
+    throw new Error(error);
   }
 }
 
@@ -88,8 +81,6 @@ async function parse_data(token, trade, settings, from_address) {
     }
     amount = _value;
   }
-
-  // Get actual amount to be used in this transaction
   return { src, dst, slippage, amount: amount.toString(), type };
 }
 async function swap(token, trade, _from, settings, cb) {
@@ -101,7 +92,6 @@ async function swap(token, trade, _from, settings, cb) {
     settings,
     from_address
   );
-
   if (type !== 'Buy') {
     cb('Checking allowance...');
     let allowance_url = checkAllowance(token.address, from_address);
@@ -121,7 +111,7 @@ async function swap(token, trade, _from, settings, cb) {
         _from.privateKey,
         from_address
       );
-      cb('Token Approval success, txn hash below', hash.hash);
+      cb('Token Approval success, txn hash below', hash);
     } else {
       cb('Allowance sufficient, skipping approval');
     }
@@ -141,23 +131,28 @@ async function swap(token, trade, _from, settings, cb) {
     }, 1000);
   });
   let swap_calldata = await swapEndpoint(swap_calldata_url);
-  console.log(swap_calldata, 'swap calldata');
   let { fromToken, toToken, toAmount } = swap_calldata;
   cb(
-    'Swap data',
-    `Swap ${ethers.utils.formatUnits(amount, fromToken.decimals)} ${
+    'Review Swap Info',
+    `Swap ${_amount_(amount, fromToken.decimals)} ${
       fromToken.symbol
-    }, for ${ethers.utils.formatUnits(toAmount, toToken.decimals)} ${
-      toToken.symbol
-    }`
+    }, for ${_amount_(toAmount, toToken.decimals)} ${toToken.symbol}`
   );
+  await new Promise((resolve) => {
+    setTimeout(() => {
+      console.log('1000 second delay');
+      resolve();
+    }, 2000);
+  });
   let hash = await signAndSendTransaction(
     swap_calldata.tx,
     _from.privateKey,
     from_address
   );
-  cb('Swap success, txn hash below', hash.hash);
-  return hash.hash;
+  cb('Swap success, txn hash below', hash);
+  return hash;
 }
-
+function _amount_(value, decimals) {
+  return ethers.utils.formatUnits(value, decimals);
+}
 module.exports = swap;

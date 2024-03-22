@@ -72,7 +72,8 @@ function Purchase(newDiv, token, account) {
             .catch((err) => {
               console.log('Error: \n', err);
               updateModal(
-                'Error occured, check console for full error message'
+                'Error occured',
+                'check console for full error message'
               );
             })
             .finally(() => {

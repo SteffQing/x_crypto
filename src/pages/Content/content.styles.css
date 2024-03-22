@@ -220,6 +220,7 @@ td {
   color: #489aff;
   font-size: 14px;
   text-decoration: none;
+  margin: 0;
 }
 .modalContent {
   font-family: 'Jura', sans-serif;
