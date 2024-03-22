@@ -212,6 +212,14 @@ td {
   width: min(100%, 400px);
   height: 50px;
 }
+.modal img {
+  border-radius: 50%;
+}
+.modal a {
+  color: #489aff;
+  font-size: 14px;
+  text-decoration: none;
+}
 .modalContent {
   font-family: 'Jura', sans-serif;
   font-optical-sizing: auto;
@@ -221,6 +229,7 @@ td {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 3px;
 }
 .modal .modalHeader h1 {
   font-size: 1.25rem;

@@ -8,7 +8,7 @@ export function TradeModal(title = 'Transaction in progress', subtitle = '') {
   modal.classList.add('modal');
 
   let img = document.createElement('img');
-  img.src = 'https://thumbs4.imagebam.com/72/f0/1a/MESML3F_t.png';
+  img.src = 'https://i.postimg.cc/XY2dSJ9H/Disk-0-6s-200px.png';
   img.alt = 'loading';
   img.style.width = '40px';
   img.style.height = '40px';
@@ -42,7 +42,10 @@ export function ModalHeader(titleContent = 'Swap', add_button = true) {
   return modalHeader;
 }
 function ModalSubtitle(subtitleContent) {
-  const modalBody = document.createElement('p');
-  modalBody.textContent = subtitleContent;
+  const modalBody = document.createElement('a');
+  let { text, link } = subtitleContent;
+  modalBody.textContent = text;
+  modalBody.href = link;
+  modalBody.target = '_blank';
   return modalBody;
 }

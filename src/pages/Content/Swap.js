@@ -61,21 +61,21 @@ function Purchase(newDiv, token, account) {
     buttonNode.classList.add('swap_button');
     buttonNode.addEventListener('click', (event) => {
       event.stopPropagation();
-      openModal();
-      // get_settings().then((settings) => {
-      //   if (settings) {
-      //     swap(token, buttonNode.innerText, account, settings)
-      //       .then((res) => {
-      //         console.log('swap hash: ', res);
-      //       })
-      //       .catch((err) => {
-      //         console.log('swap err: ', err);
-      //       })
-      //       .finally(() => {
-      //         closeModal();
-      //       });
-      //   }
-      // });
+      get_settings().then((settings) => {
+        if (settings) {
+          openModal();
+          swap(token, buttonNode.innerText, account, settings)
+            .then((res) => {
+              console.log('swap hash: ', res);
+            })
+            .catch((err) => {
+              console.log('swap err: ', err);
+            })
+            .finally(() => {
+              closeModal();
+            });
+        }
+      });
     });
     newDiv.appendChild(buttonNode);
   }
@@ -94,11 +94,11 @@ function openModal() {
   Modal.id = modal_id;
   document.body.appendChild(Modal);
 }
-function updateModal(title, text) {
+function updateModal(title, subtitle) {
   const Modal = document.getElementById(modal_id);
   if (Modal) {
     closeModal();
-    const newModal = TradeModal(title, text);
+    const newModal = TradeModal(title, subtitle);
     newModal.id = modal_id;
     document.body.appendChild(newModal);
   }
