@@ -215,7 +215,8 @@ td {
 .modal img {
   border-radius: 50%;
 }
-.modal a {
+.modal a,
+.modal p {
   color: #489aff;
   font-size: 14px;
   text-decoration: none;

@@ -64,15 +64,21 @@ function Purchase(newDiv, token, account) {
       get_settings().then((settings) => {
         if (settings) {
           openModal();
-          swap(token, buttonNode.innerText, account, settings)
+          swap(token, buttonNode.innerText, account, settings, updateModal)
             .then((res) => {
               console.log('swap hash: ', res);
+              updateModal('Transaction completed', res);
             })
             .catch((err) => {
-              console.log('swap err: ', err);
+              console.log('Error: \n', err);
+              updateModal(
+                'Error occured, check console for full error message'
+              );
             })
             .finally(() => {
-              closeModal();
+              setTimeout(() => {
+                closeModal();
+              }, 3000);
             });
         }
       });
@@ -94,10 +100,18 @@ function openModal() {
   Modal.id = modal_id;
   document.body.appendChild(Modal);
 }
-function updateModal(title, subtitle) {
+function updateModal(title, hash) {
   const Modal = document.getElementById(modal_id);
   if (Modal) {
     closeModal();
+    let subtitle = '';
+    if (hash && hash.startsWith('0x') && hash.length === 66) {
+      let link = `https://polygonscan.com/tx/${hash}`;
+      let text = `${hash.slice(0, 9)}...${hash.slice(-6)}`;
+      subtitle = { text, link };
+    } else if (hash) {
+      subtitle = hash;
+    }
     const newModal = TradeModal(title, subtitle);
     newModal.id = modal_id;
     document.body.appendChild(newModal);

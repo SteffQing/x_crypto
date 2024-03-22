@@ -42,10 +42,16 @@ export function ModalHeader(titleContent = 'Swap', add_button = true) {
   return modalHeader;
 }
 function ModalSubtitle(subtitleContent) {
-  const modalBody = document.createElement('a');
-  let { text, link } = subtitleContent;
-  modalBody.textContent = text;
-  modalBody.href = link;
-  modalBody.target = '_blank';
-  return modalBody;
+  if (typeof subtitleContent === 'string') {
+    const modalBody = document.createElement('p');
+    modalBody.textContent = subtitleContent;
+    return modalBody;
+  } else {
+    const modalBody = document.createElement('a');
+    let { text, link } = subtitleContent;
+    modalBody.textContent = text;
+    modalBody.href = link;
+    modalBody.target = '_blank';
+    return modalBody;
+  }
 }

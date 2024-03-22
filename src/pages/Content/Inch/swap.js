@@ -92,8 +92,9 @@ async function parse_data(token, trade, settings, from_address) {
   // Get actual amount to be used in this transaction
   return { src, dst, slippage, amount: amount.toString(), type };
 }
-async function swap(token, trade, _from, settings) {
+async function swap(token, trade, _from, settings, cb) {
   let from_address = _from.account;
+  cb('Please wait, parsing data...');
   let { src, dst, slippage, amount, type } = await parse_data(
     token,
     trade,
@@ -102,9 +103,11 @@ async function swap(token, trade, _from, settings) {
   );
 
   if (type !== 'Buy') {
+    cb('Checking allowance...');
     let allowance_url = checkAllowance(token.address, from_address);
     let { allowance } = await swapEndpoint(allowance_url);
     if (Number(allowance) < Number(amount)) {
+      cb('Approving token...');
       let approve_calldata_url = await get_approve_calldata(token.address);
       await new Promise((resolve) => {
         setTimeout(() => {
@@ -118,9 +121,12 @@ async function swap(token, trade, _from, settings) {
         _from.privateKey,
         from_address
       );
-      console.log(hash.hash, 'approve HASH');
+      cb('Token Approval success, txn hash below', hash.hash);
+    } else {
+      cb('Allowance sufficient, skipping approval');
     }
   }
+  cb('Swapping tokens, please wait...');
   let swap_calldata_url = await get_swap_calldata(
     src,
     dst,
@@ -136,12 +142,21 @@ async function swap(token, trade, _from, settings) {
   });
   let swap_calldata = await swapEndpoint(swap_calldata_url);
   console.log(swap_calldata, 'swap calldata');
+  let { fromToken, toToken, toAmount } = swap_calldata;
+  cb(
+    'Swap data',
+    `Swap ${ethers.utils.formatUnits(amount, fromToken.decimals)} ${
+      fromToken.symbol
+    }, for ${ethers.utils.formatUnits(toAmount, toToken.decimals)} ${
+      toToken.symbol
+    }`
+  );
   let hash = await signAndSendTransaction(
     swap_calldata.tx,
     _from.privateKey,
     from_address
   );
-  console.log(hash.hash, 'swap HASH');
+  cb('Swap success, txn hash below', hash.hash);
   return hash.hash;
 }
 
